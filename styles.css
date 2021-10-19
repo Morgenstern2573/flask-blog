@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+/* @import "custom.css"; */
+@tailwind utilities;
+
+@layer base {
+  a {
+    @apply hover:text-blue-800;
+  }
+
+  p {
+    @apply text-gray-900;
+  }
+
+  .ml-1\/6 {
+    margin-left: 16.666666667%;
+  }
+}

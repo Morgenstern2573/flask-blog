@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <title>Admin</title>
+</head>
+
+<body>
+  <div>
+    <input type="text" placeholder="Post Title...">
+  </div>
+  <div class="dropdown">
+    <button type="button" class="btn btn-primary btn-sm">New Block</button>
+    <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52">
+      <li class="cursor-pointer" id="header-button">Header</li>
+      <li class="cursor-pointer" id="paragraph-button">Paragraph</li>
+      <li class="cursor-pointer" id="image-button">Image</li>
+    </ul>
+  </div>
+  <div id="widget-container"></div>
+  <div>
+    <button type="button">Save Post</button>
+  </div>
+</body>
+
+<script>
+  // storage object for data URIs of uploaded images
+  let dataURIs = {}
+
+  // parent div of all widgets on the page
+  let container = document.getElementById("widget-container")
+
+  // construct toolbar of widget container
+  function createToolBar() {
+    let toolBar = document.createElement("div");
+    const delButton = document.createElement("button");
+    delButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current">   
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>                       
+                          </svg>`
+    delButton.addEventListener("click", (e) => {
+      let parent = e.target
+      while (!parent.classList.contains("widget-cont")) {
+        parent = parent.parentElement
+      }
+      parent.remove()
+    })
+    delButton.classList = "btn btn-sm"
+    toolBar.appendChild(delButton)
+
+    const moveUpButton = document.createElement("button")
+    moveUpButton.innerHTML = `<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                      <path fill="currentColor"
+                                       d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z" />
+                              </svg>`
+    moveUpButton.classList = "btn btn-sm"
+    moveUpButton.addEventListener("click", (e)=> {
+      let parent = e.target
+      while (!parent.classList.contains("widget-cont")) {
+        parent = parent.parentElement
+      }
+      let parentContainer = parent.parentElement
+      let siblings = parentContainer.childNodes
+      let ind = 0
+      console.log(parent, parentContainer, siblings)
+      for (let i = 0; i < siblings.length; i++){
+        node = siblings[i]
+        if (node === parent) {
+          ind = i
+          break
+        }
+      }
+      console.log(ind)
+      if (ind === 0) {
+        return
+      }
+      let elder = parentContainer.querySelector(`div:nth-child(${ind})`)
+      if (elder) {
+        parentContainer.insertBefore(parent, elder)
+      }
+    })
+    toolBar.appendChild(moveUpButton)
+   
+    const moveDownButton = document.createElement("button")
+    moveDownButton.innerHTML = `<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                    <path fill="currentColor" 
+                                    d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
+                                </svg>`
+    moveDownButton.classList = "btn btn-sm"
+    moveDownButton.addEventListener("click", (e)=> {
+      let parent = e.target
+      while (!parent.classList.contains("widget-cont")) {
+        parent = parent.parentElement
+      }
+      let parentContainer = parent.parentElement
+      let siblings = parentContainer.childNodes
+      let ind = 0
+      console.log(parent, parentContainer, siblings)
+      for (let i = 0; i < siblings.length; i++){
+        node = siblings[i]
+        if (node === parent) {
+          ind = i
+          break
+        }
+      }
+      console.log(ind)
+      if (ind === siblings.length - 1) {
+        return
+      }
+      ind = ind+2
+      let younger = parentContainer.querySelector(`div:nth-child(${ind})`)
+      if (younger) {
+        parentContainer.insertBefore(younger, parent)
+      }
+    })
+    toolBar.appendChild(moveDownButton)
+    toolBar.classList = "flex justify-end"
+
+    return toolBar
+
+  }
+
+  //create paragraph widget on click of dropdown
+  document.getElementById("paragraph-button").addEventListener("click", (event) => {
+    let widgetCont = document.createElement("div")
+    widgetCont.classList = "bg-gray-100 widget-cont"
+    let toolBar = createToolBar()
+    let linkButton = document.createElement("button")
+    linkButton.classList = "btn btn-sm"
+    linkButton.innerHTML = "New link"
+    linkButton.addEventListener("click", (e) => {
+      let parent = e.target.parentElement.parentElement
+      let textArea = parent.querySelector('textarea')
+      let currentText = textArea.value
+      let ind = textArea.selectionStart
+      currentText = currentText.substring(0, ind) + `<link url="">Link Text</link>` + currentText.substring(ind + 1)
+      textArea.value = currentText
+    })
+    toolBar.appendChild(linkButton)
+
+    let widget = document.createElement("textarea")
+    widget.placeholder = "Paragraph Content here..."
+    widget.classList = "widget paragraph-widget py-8 px-2 block bg-gray-300 text-gray-900 w-full"
+    widgetCont.appendChild(toolBar)
+    widgetCont.appendChild(widget)
+    container.appendChild(widgetCont)
+  })
+  
+  //create image widget on click of dropdown
+  document.getElementById("image-button").addEventListener("click", (event) => {
+    let widgetCont = document.createElement("div")
+    widgetCont.classList = "bg-gray-100 widget-cont"
+    let toolBar = createToolBar()
+    let widget = document.createElement("input")
+    widget.type = "file"
+    widget.accept = ".jpg,.jpeg,.png"
+    widget.addEventListener("change", (e) => {
+      const curFiles = e.target.files;
+      if(curFiles.length === 0) {
+        return;
+      }
+
+      let parent = e.target.parentElement
+      let img = parent.querySelector("img")
+
+      if (img !== null) {
+        img.remove()
+      }
+
+      const file = curFiles[0]
+      img = document.createElement("img")
+      img.src = URL.createObjectURL(file)
+      img.classList = "h-64 w-64"
+      parent.appendChild(img)
+    })
+    widget.classList = "widget paragraph-widget py-4 px-2 block bg-gray-200  w-full"
+    widgetCont.appendChild(toolBar)
+    widgetCont.appendChild(widget)
+    container.appendChild(widgetCont)
+  })
+
+  //create header widget on click of dropdown
+  document.getElementById("header-button").addEventListener("click", (event) => {
+    let widgetCont = document.createElement("div")
+    widgetCont.classList = "bg-gray-100 widget-cont"
+    let toolBar = createToolBar()
+    let widget = document.createElement("input")
+    widget.placeholder = "Header Name here..."
+    widget.classList = "widget header-widget py-8 px-2 block bg-gray-300 text-gray-900 w-full"
+    widgetCont.appendChild(toolBar)
+    widgetCont.appendChild(widget)
+    container.appendChild(widgetCont)
+  })
+</script>

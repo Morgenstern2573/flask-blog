@@ -1,0 +1,22 @@
+{% extends 'base.html'  %}
+
+{% block body %}
+{% if article  %}
+  <div class=" lg:w-2/3 mx-auto">
+    <h1 class="capitalize title-font sm:text-3xl lg:text-5xl mb-2 font-medium text-gray-900 text-center">{{ article.title }}</h1>
+    <h4 class="text-gray-700 leading-relaxed mb-4">By: {{ article.author }} <br> Written on: {{ article.date}} </h4>
+    {% for el in article.body %}
+      {% if el.header %}
+        <h2 class="capitalize title-font sm:text-xl lg:text-3xl mb-2 font-medium text-gray-900">{{ el.header }}</h2>
+      {% elif el.paragraph %}
+        <p class="my-4">{{ el.paragraph }}</p>
+      {% elif el.intro  %}
+        <h2 class="capitalize title-font sm:text-xl lg:text-3xl mb-2 font-medium text-gray-900">Introduction</h2>
+        <p class="my-4">{{ el.intro }}</p>
+      {% else %}
+        <img src="{{el.image}}" alt="{{el.alt}}" class="mx-auto my-16">
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

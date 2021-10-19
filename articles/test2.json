@@ -1,0 +1,12 @@
+{
+  "title": "test 2",
+  "date": "23rd November 2019",
+  "author": "Paul Akinyemi",
+  "categories": ["featured", "academics", "guide"],
+  "body": [
+    {"intro": "Non id aute amet veniam eiusmod reprehenderit. Esse consequat fugiat consequat ex reprehenderit ea cillum elit et reprehenderit irure. Fugiat commodo aute deserunt quis voluptate enim officia est tempor laborum ex sint tempor. Commodo nostrud ea occaecat consectetur cupidatat reprehenderit commodo eiusmod voluptate ut anim. Dolor consectetur enim nostrud nulla do excepteur ullamco nisi. Adipisicing pariatur proident voluptate fugiat. Tempor ipsum et in et."},
+    {"header": "Paragraph of Palatial Prestigious Profundity"},
+    {"paragraph": "Excepteur labore et laborum id ullamco non laborum officia duis consectetur esse quis. Irure sit laboris tempor magna nostrud voluptate non nisi amet in. Sint incididunt cillum commodo labore dolor amet sint pariatur exercitation consequat proident. Adipisicing sint labore commodo occaecat labore dolore esse sint quis in ea eiusmod excepteur id. Voluptate tempor occaecat nostrud reprehenderit cupidatat tempor eiusmod."},
+    {"image": "https://dummyimage.com/500x500"}
+  ]
+}
