@@ -1,14 +1,12 @@
 module.exports = {
-  // purge: ["./build/*.html", "./build/*.js"],
-  purge: [],
+  mode: "jit",
+  purge: ["./blogserver/**/*.{html,js}"],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    // fontFamily: {
-    //   inter: ["Inter", "sans-serif"],
-    // },
     extend: {
       height: {
         fit: "fit-content",
+        infinite: "calc(99*100vh)",
       },
       width: {
         fit: "fit-content",
@@ -18,5 +16,8 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [require("daisyui")],
+  daisyui: {
+    themes: false,
+  },
+  plugins: [require("daisyui"), require("@tailwindcss/typography")],
 };

@@ -8,28 +8,80 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script defer src="{{ url_for('static', filename='script.js') }}"></script>
   <title>Admin</title>
 </head>
 
-<body>
-  <div>
-    <input type="text" placeholder="Post Title...">
-  </div>
-  <div class="dropdown">
-    <button type="button" class="btn btn-primary btn-sm">New Block</button>
-    <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52">
-      <li class="cursor-pointer" id="header-button">Header</li>
-      <li class="cursor-pointer" id="paragraph-button">Paragraph</li>
-      <li class="cursor-pointer" id="image-button">Image</li>
-    </ul>
-  </div>
-  <div id="widget-container"></div>
-  <div>
-    <button type="button">Save Post</button>
+<body class="container mx-auto">
+  <div class="lg:w-2/3 mx-auto py-8 px-4 md:px-8">
+
+    <div class="title-block mb-4">
+      <input type="text" class="text-3xl p-4 border border-black rounded block w-full"
+      placeholder="Post Title..."
+      autofocus
+      >
+    </div>
+
+    <div class="category-block mb-4 p-4 border border-black rounded">
+      <h2 class="leading-none mb-6 text-xl">Categories</h2>
+      <div class="mb-4 flex flex-wrap justify-start items-center" id="category-cont"></div>
+      <div class="dropdown">
+        <button  type="button" class="text-xs btn btn-xs">Add Category</button>
+        <div class="dropdown-content p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52">
+          <ul>
+            <li class="btn btn-sm" id="category-collapse-trigger">NEW CATEGORY</li>
+            <li class="btn btn-sm">EXISTING CATEGORY</li>
+          </ul>
+        </div>
+      </div>
+        <div>
+          <div id="category-collapse" class="mt-2 hidden">
+            <input type="text" class="border border-black rounded px-2" placeholder="Name...">
+            <button type="button" class="btn btn-xs px-2" id="save-category">Save</button>
+          </div>
+        </div>
+    </div>
+    
+    <div class="editor-block border border-black rounded-md mb-4">
+      <div class="tool-menu flex flex-wrap justify-start items-center mb-1 border-b border-black px-4 shadow-xs">
+        <button class="menu-button btn-outline" id="h1-button">H1</button>
+        <button class="menu-button btn-outline" id="h2-button">H2</button>
+        <button class="menu-button btn-outline" id="bold-button">B</button>
+        <button class="menu-button btn-outline" id="italics-button">I</button>
+        <button class="menu-button btn-outline" id="underline-button">U</button>
+        <button class="menu-button btn-outline" id="link-button">Link</button>
+        <button class="menu-button btn-outline" id="image-button">Image</button>
+        <!-- <div class="dropdown">
+          <button class="btn btn-sm px-4 btn-outline">Link</button>
+          <div class="dropdown-content w-48 shadow-md px-2">
+            <ul>
+              <li id="set-link-button" class="cursor-pointer my-2">Set Link</li>
+              <li id="unset-link-button" class="cursor-pointer my-2">UnSet Link</li>
+            </ul>
+          </div>
+        </div> -->
+      </div>
+
+      <div id="mount-element" class="prose"></div>
+    </div>
+    
+    <!-- <div class="dropdown">
+      <button type="button" class="btn btn-primary btn-sm">New Block</button>
+      <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52">
+        <li class="cursor-pointer" id="header-button">Header</li>
+        <li class="cursor-pointer" id="paragraph-button">Paragraph</li>
+        <li class="cursor-pointer" id="image-button">Image</li>
+      </ul>
+    </div>
+    <div id="widget-container"></div> -->
+    <div>
+      <button type="button" class="btn mr-4">Publish Post</button>
+      <button type="button" class="btn btn-outline">Save as Draft</button>
+    </div>
   </div>
 </body>
 
-<script>
+<!-- <script>
   // storage object for data URIs of uploaded images
   let dataURIs = {}
 
@@ -196,4 +248,4 @@
     widgetCont.appendChild(widget)
     container.appendChild(widgetCont)
   })
-</script>
+</script> -->

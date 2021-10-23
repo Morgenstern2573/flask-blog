@@ -12,6 +12,27 @@
     @apply text-gray-900;
   }
 
+  button {
+    @apply !leading-none;
+  }
+
+  .menu-button {
+    @apply p-1 shadow-sm text-sm mr-2 my-2 btn btn-sm;
+  }
+
+  .ProseMirror {
+    min-height: 200px;
+    @apply px-4 outline-none;
+  }
+
+  /* .ProseMirror h1 {
+    @apply text-3xl;
+  }
+
+  .ProseMirror h2 {
+    @apply text-2xl;
+  } */
+
   .ml-1\/6 {
     margin-left: 16.666666667%;
   }
