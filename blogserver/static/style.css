@@ -1042,13 +1042,6 @@ button {
   color: hsla(var(--bc)/var(--tw-text-opacity,1));
 }
 
-.btn-circle {
-  border-radius: 9999px;
-  height: 3rem;
-  padding: 0;
-  width: 3rem;
-}
-
 .btn.loading,.btn.loading:hover {
   pointer-events: none;
 }
@@ -1120,16 +1113,6 @@ button {
   -moz-appearance: none;
   appearance: none;
   opacity: 0;
-}
-
-.collapse-content {
-  overflow: hidden;
-  grid-row-start: 2;
-  max-height: 0;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  cursor: unset;
-  transition: padding .2s ease-in-out,background-color .2s ease-in-out;
 }
 
 .collapse-open .collapse-content,.collapse:focus:not(.collapse-close) .collapse-content,.collapse:not(.collapse-close) input[type=checkbox]:checked~.collapse-content {
@@ -1524,6 +1507,11 @@ button {
   outline: 2px solid transparent;
   outline-offset: 2px;
   box-shadow: 0 0 0 2px hsl(var(--b1)),0 0 0 4px hsla(var(--bc)/.2);
+}
+
+.toggle:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
 }
 
 .btn .badge {
@@ -2596,6 +2584,53 @@ button {
   color: hsla(var(--bc)/var(--tw-placeholder-opacity,1));
 }
 
+.toggle {
+  --chkbg: hsla(var(--bc)/.2);
+  --focus-shadow: 0 0 0;
+  --handleoffset: 1.5rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  --tw-bg-opacity: 1;
+  --tw-bg-opacity: 0.2;
+  background-color: hsla(var(--bc)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  --tw-border-opacity: 0.2;
+  border-color: hsla(var(--bc)/var(--tw-border-opacity,1));
+  border-width: 1px;
+  cursor: pointer;
+  height: 1.5rem;
+  width: 3rem;
+  transition-timing-function: cubic-bezier(.4,0,.2,1);
+  transition-duration: .3s;
+  border-radius: var(--rounded-badge,1.9rem);
+  transition: background,box-shadow var(--animation-input,.2s) ease-in-out;
+  box-shadow: calc(var(--handleoffset)*-1) 0 0 2px hsl(var(--b1)) inset,0 0 0 2px hsl(var(--b1)) inset,var(--focus-shadow);
+}
+
+.toggle:focus-visible {
+  --focus-shadow: 0 0 0 2px hsl(var(--b1)),0 0 0 4px hsl(var(--bc));
+}
+
+.toggle:checked {
+  --chkbg: hsl(var(--bc));
+  --tw-bg-opacity: 1;
+  --tw-border-opacity: 1;
+  box-shadow: var(--handleoffset) 0 0 2px hsl(var(--b1)) inset,0 0 0 2px hsl(var(--b1)) inset,var(--focus-shadow);
+}
+
+[dir=rtl] .toggle:checked {
+  box-shadow: calc(var(--handleoffset)*1) 0 0 2px hsl(var(--b1)) inset,0 0 0 2px hsl(var(--b1)) inset,var(--focus-shadow);
+}
+
+.toggle:disabled {
+  --tw-bg-opacity: 1;
+  --tw-bg-opacity: 0.2;
+  background-color: hsla(var(--bc)/var(--tw-bg-opacity,1));
+  border-color: transparent;
+  cursor: not-allowed;
+}
+
 .prose {
   color: inherit;
 }
@@ -2711,20 +2746,6 @@ button {
   height: 2rem;
   padding: 0;
   width: 2rem;
-}
-
-.btn-circle.btn-md {
-  border-radius: 9999px;
-  height: 3rem;
-  padding: 0;
-  width: 3rem;
-}
-
-.btn-circle.btn-lg {
-  border-radius: 9999px;
-  height: 4rem;
-  padding: 0;
-  width: 4rem;
 }
 
 .avatar.online:before {
@@ -3166,12 +3187,25 @@ button {
   margin-bottom: 4rem;
 }
 
+.my-8 {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
 .mb-4 {
   margin-bottom: 1rem;
 }
 
-.mb-2 {
-  margin-bottom: 0.5rem;
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
 }
 
 .mb-1 {
@@ -3202,24 +3236,16 @@ button {
   margin-bottom: 4rem;
 }
 
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
 .mb-8 {
   margin-bottom: 2rem;
 }
 
 .ml-4 {
   margin-left: 1rem;
-}
-
-.mr-2 {
-  margin-right: 0.5rem;
-}
-
-.mt-2 {
-  margin-top: 0.5rem;
-}
-
-.mb-6 {
-  margin-bottom: 1.5rem;
 }
 
 .block {
@@ -3250,6 +3276,10 @@ button {
   display: none;
 }
 
+.h-3 {
+  height: 0.75rem;
+}
+
 .h-4 {
   height: 1rem;
 }
@@ -3262,24 +3292,20 @@ button {
   height: 2.5rem;
 }
 
-.h-full {
-  height: 100%;
-}
-
-.h-3 {
-  height: 0.75rem;
+.w-3 {
+  width: 0.75rem;
 }
 
 .w-full {
   width: 100%;
 }
 
-.w-48 {
-  width: 12rem;
-}
-
 .w-52 {
   width: 13rem;
+}
+
+.w-48 {
+  width: 12rem;
 }
 
 .w-4 {
@@ -3296,10 +3322,6 @@ button {
 
 .w-5\/6 {
   width: 83.333333%;
-}
-
-.w-3 {
-  width: 0.75rem;
 }
 
 .transform {
@@ -3398,6 +3420,16 @@ button {
   background-color: rgba(99, 102, 241, var(--tw-bg-opacity));
 }
 
+.bg-red-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(248, 113, 113, var(--tw-bg-opacity));
+}
+
+.bg-red-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(252, 165, 165, var(--tw-bg-opacity));
+}
+
 .stroke-current {
   stroke: currentColor;
 }
@@ -3422,10 +3454,6 @@ button {
 
 .p-5 {
   padding: 1.25rem;
-}
-
-.p-1 {
-  padding: 0.25rem;
 }
 
 .py-8 {
@@ -3476,21 +3504,6 @@ button {
 .px-6 {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-}
-
-.px-1 {
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
-}
-
-.py-0\.5 {
-  padding-top: 0.125rem;
-  padding-bottom: 0.125rem;
-}
-
-.py-0 {
-  padding-top: 0px;
-  padding-bottom: 0px;
 }
 
 .text-center {
@@ -3572,6 +3585,11 @@ button {
   color: rgba(99, 102, 241, var(--tw-text-opacity));
 }
 
+.text-red-800 {
+  --tw-text-opacity: 1;
+  color: rgba(153, 27, 27, var(--tw-text-opacity));
+}
+
 .underline {
   text-decoration: underline;
 }
@@ -3580,13 +3598,13 @@ button {
   text-decoration: line-through;
 }
 
-.shadow-md {
-  --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+.shadow {
+  --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-.shadow {
-  --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+.shadow-md {
+  --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
@@ -3602,6 +3620,254 @@ button {
 
 .filter {
   filter: var(--tw-filter);
+}
+
+.hover\:btn-outline:hover .hover\:badge:hover {
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--nf)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--nc)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-primary:hover .hover\:badge:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--p)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--p)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--pc)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-secondary:hover .hover\:badge:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--s)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--s)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--sc)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-accent:hover .hover\:badge:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--a)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--a)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--ac)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover .hover\:badge:hover.hover\:outline:hover {
+  background-color: transparent;
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--nf)/var(--tw-border-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-primary:hover .hover\:badge-outline:hover {
+  background-color: transparent;
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--p)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--p)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-secondary:hover .hover\:badge-outline:hover {
+  background-color: transparent;
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--s)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--s)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-accent:hover .hover\:badge-outline:hover {
+  background-color: transparent;
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--a)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--a)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover:hover .hover\:badge:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--b2)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--b2)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--bc)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover:hover .hover\:badge:hover.hover\:outline:hover {
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--b2)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--nc)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-primary:hover:hover .hover\:badge:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--pc)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--pc)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--p)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-primary:hover:hover .hover\:badge:hover.hover\:outline:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--pf)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--pc)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--pc)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-secondary:hover:hover .hover\:badge:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--sc)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--sc)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--s)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-secondary:hover:hover .hover\:badge:hover.hover\:outline:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--sf)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--sc)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--sc)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-accent:hover:hover .hover\:badge:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--ac)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--ac)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--a)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-accent:hover:hover .hover\:badge:hover.hover\:outline:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--af)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--ac)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--ac)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover {
+  background-color: transparent;
+  border-color: currentColor;
+  --tw-text-opacity: 1;
+  color: hsla(var(--bc)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--bc)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--bc)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--b1)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-primary:hover {
+  --tw-text-opacity: 1;
+  color: hsla(var(--p)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-primary:hover:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--pf)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--pf)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--pc)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-secondary:hover {
+  --tw-text-opacity: 1;
+  color: hsla(var(--s)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-secondary:hover:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--sf)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--sf)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--sc)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-accent:hover {
+  --tw-text-opacity: 1;
+  color: hsla(var(--a)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-accent:hover:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--af)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--af)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--ac)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-success:hover {
+  --tw-text-opacity: 1;
+  color: hsla(var(--su)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-success:hover:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--su)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--su)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--nc)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-info:hover {
+  --tw-text-opacity: 1;
+  color: hsla(var(--in)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-info:hover:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--in)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--in)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--nc)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-warning:hover {
+  --tw-text-opacity: 1;
+  color: hsla(var(--wa)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-warning:hover:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--wa)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--wa)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--nc)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-error:hover {
+  --tw-text-opacity: 1;
+  color: hsla(var(--er)/var(--tw-text-opacity,1));
+}
+
+.hover\:btn-outline:hover.hover\:btn-error:hover:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--er)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--er)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--nc)/var(--tw-text-opacity,1));
 }
 
 .hover\:bg-gray-200:hover {
@@ -3664,6 +3930,10 @@ button {
 
   .md\:items-start {
     align-items: flex-start;
+  }
+
+  .md\:p-4 {
+    padding: 1rem;
   }
 
   .md\:px-8 {
