@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+  <title>Admin</title>
+</head>
+
+<body class="container mx-auto">
+  <div class="lg:w-2/3 mx-auto py-8 px-4 md:px-8">
+    <p id="error-msg" class="rounded capitalize text-xl font-medium mb-4 p-2 md:p-4 bg-red-300 text-red-800 text-center hidden"></p>
+    <div class="title-block mb-4">
+      <input type="text" class="text-3xl capitalize p-4 border border-black rounded block w-full"
+      id="title-field"
+      placeholder="Post Title..."
+      autofocus
+      required
+      >
+    </div>
+
+    <div data-controller="collapse" class="category-block mb-4 p-4 border border-black rounded">
+      <h2 class="leading-none mb-6 text-xl">Categories</h2>
+      <div class="mb-4 flex flex-wrap justify-start items-center" id="category-cont"></div>
+      <div tabindex="0" class="dropdown">
+        <button  type="button" class="text-xs btn btn-xs" data-action="click->collapse#hideAll">Add Category</button>
+        <div tabindex="0" class="dropdown-content p-2 shadow menu  bg-base-100 rounded-box w-52">
+          <ul>
+            <li class="cursor-pointer" data-action="click->collapse#showNew">NEW CATEGORY</li>
+            <li class="cursor-pointer" data-action="click->collapse#showEx">EXISTING CATEGORY</li>
+          </ul>
+        </div>
+      </div>
+        <div>
+          <div data-collapse-target="newContent" class="hidden mt-2">
+            <input type="text" class="category-input border border-black rounded px-2" placeholder="Name...">
+            <button type="button" class="btn btn-xs px-2 save-category-btn">Save</button>
+          </div>
+
+          <div data-collapse-target="exContent" class="hidden mt-2">
+            <select type="text" class="category-input border border-black rounded px-2">
+              <option value="Shoes">Shoes</option>
+              <option value="Bags">Bags</option>
+              <option value="Buttons">Clothes</option>
+            </select>
+            <button type="button" class="btn btn-xs px-2 save-category-btn">Save</button>
+          </div>
+        </div>
+    </div>
+    
+    <div class="editor-block border border-black rounded-md mb-4">
+      <div class="tool-menu flex flex-wrap justify-start items-center mb-1 border-b border-black px-4 shadow-xs">
+        <button class="menu-button btn-outline" id="h1-button">H1</button>
+        <button class="menu-button btn-outline" id="h2-button">H2</button>
+        <button class="menu-button btn-outline" id="bold-button">B</button>
+        <button class="menu-button btn-outline" id="italics-button">I</button>
+        <button class="menu-button btn-outline" id="underline-button">U</button>
+        <button class="menu-button btn-outline" id="link-button">Link</button>
+        <button class="menu-button btn-outline" id="image-button">Image</button>
+        <!-- <div class="dropdown">
+          <button class="btn btn-sm px-4 btn-outline">Link</button>
+          <div class="dropdown-content w-48 shadow-md px-2">
+            <ul>
+              <li id="set-link-button" class="cursor-pointer my-2">Set Link</li>
+              <li id="unset-link-button" class="cursor-pointer my-2">UnSet Link</li>
+            </ul>
+          </div>
+        </div> -->
+      </div>
+
+      <div id="mount-element" class="prose"></div>
+    </div>
+    
+    <div>
+      <button type="button" class="submit-btn btn hover:btn-outline mr-4">Publish Post</button>
+      <button type="button" class="submit-btn btn btn-outline">Save as Draft</button>
+    </div>
+  </div>
+
+  <!-- data dump for editing -->
+  <div id="prev-title" class="hidden">{{ prev["title"]  }}</div>
+  <div id="prev-content" class="hidden">{{ prev.content|safe }}</div>
+  <div id="prev-cat" class="hidden">{{ prev["cat"] }}</div>
+</body>

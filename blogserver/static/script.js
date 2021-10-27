@@ -18466,6 +18466,7 @@ img.ProseMirror-separator {
   __publicField(collapse_controller_default, "targets", ["newContent", "exContent"]);
 
   // script.js
+  var QUERY_PARAMS = new URLSearchParams(window.location.search);
   var boldBtn = document.getElementById("bold-button");
   var italBtn = document.getElementById("italics-button");
   var underBtn = document.getElementById("underline-button");
@@ -18530,32 +18531,36 @@ img.ProseMirror-separator {
   });
   window.Stimulus = Application.start();
   Stimulus.register("collapse", collapse_controller_default);
-  function addCategory(e) {
-    let parent = e.target.parentElement;
-    let value = parent.querySelector(".category-input").value.trim().toLowerCase();
-    if (value.length === 0) {
-      return;
-    }
-    let categoryCont = document.getElementById("category-cont");
+  function createCategoryTag(value) {
     let tag = document.createElement("p");
     tag.classList = "post-category badge badge-outline mr-2";
     let delBtn = document.createElement("span");
     delBtn.classList = "cursor-pointer";
-    delBtn.title = `delete ${value}`;
+    delBtn.title = `remove ${value}`;
     delBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-3 h-3 stroke-current">   
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>                       
                       </svg>`;
-    delBtn.addEventListener("click", (e2) => {
+    delBtn.addEventListener("click", (e) => {
       tag.remove();
     });
     tag.innerHTML = `<span class="mr-2 category-name">${value}</span>`;
     tag.appendChild(delBtn);
+    return tag;
+  }
+  function addCategoryTag(value) {
+    if (value.length === 0) {
+      return;
+    }
+    let categoryCont = document.getElementById("category-cont");
+    let tag = createCategoryTag(value);
     categoryCont.appendChild(tag);
-    parent.querySelector(".category-input").value = "";
   }
   for (const element of document.getElementsByClassName("save-category-btn")) {
     element.addEventListener("click", (e) => {
-      addCategory(e);
+      let parent = e.target.parentElement;
+      let value = parent.querySelector(".category-input").value.trim().toLowerCase();
+      addCategoryTag(value);
+      parent.querySelector(".category-input").value = "";
     });
   }
   function submit() {
@@ -18584,7 +18589,11 @@ img.ProseMirror-separator {
     form.set("title", postTitle);
     form.set("categories", postCategories);
     form.set("body", postContent);
-    fetch("/new-post", {
+    if (QUERY_PARAMS.get("edit") === "true") {
+      form.set("edit", "true");
+      form.set("id", QUERY_PARAMS.get("id"));
+    }
+    fetch("/admin/post", {
       credentials: "include",
       method: "POST",
       body: form
@@ -18598,6 +18607,25 @@ img.ProseMirror-separator {
   }
   for (const element of document.getElementsByClassName("submit-btn")) {
     element.addEventListener("click", submit);
+  }
+  function preFillPage() {
+    let titleField = document.getElementById("title-field");
+    titleField.value = document.getElementById("prev-title").innerHTML.trim();
+    let prevCategories = document.getElementById("prev-cat").innerHTML.split(",");
+    let prevContent = document.getElementById("prev-content").innerHTML.trim();
+    if (prevContent.length !== 0) {
+      editor.commands.setContent(prevContent);
+    }
+    for (let cat of prevCategories) {
+      cat = cat.trim().toLowerCase();
+      if (cat.length !== 0) {
+        addCategoryTag(cat);
+      }
+    }
+    console.log(prevContent, prevContent.length, prevCategories);
+  }
+  if (QUERY_PARAMS.get("edit") === "true") {
+    preFillPage();
   }
 })();
 //# sourceMappingURL=script.js.map

@@ -1,3 +1,12 @@
+//-----------------------------------------------------------------------------
+//                GLOBAL VARIABLES
+//-----------------------------------------------------------------------------
+const QUERY_PARAMS = new URLSearchParams(window.location.search);
+
+// ----------------------------------------------------------------------------
+//                 END
+// ----------------------------------------------------------------------------
+
 // ----------------------------------------------------------------------------
 //                 SCRIPTING RELATED TO THE EDITOR
 // ----------------------------------------------------------------------------
@@ -99,28 +108,13 @@ import collapseController from "./controllers/collapse_controller";
 window.Stimulus = Application.start();
 Stimulus.register("collapse", collapseController);
 
-function addCategory(e) {
-  let parent = e.target.parentElement;
-  //get value of select or input, trim and set to lowercase
-  let value = parent
-    .querySelector(".category-input")
-    .value.trim()
-    .toLowerCase();
-
-  //validate
-  if (value.length === 0) {
-    return;
-  }
-
-  // container element
-  let categoryCont = document.getElementById("category-cont");
-
+function createCategoryTag(value) {
   let tag = document.createElement("p");
   tag.classList = "post-category badge badge-outline mr-2";
 
   let delBtn = document.createElement("span");
   delBtn.classList = "cursor-pointer";
-  delBtn.title = `delete ${value}`;
+  delBtn.title = `remove ${value}`;
   //"X" svg
   delBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-3 h-3 stroke-current">   
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>                       
@@ -131,15 +125,35 @@ function addCategory(e) {
 
   tag.innerHTML = `<span class="mr-2 category-name">${value}</span>`;
   tag.appendChild(delBtn);
-  categoryCont.appendChild(tag);
+  return tag;
+}
 
-  //reset value
-  parent.querySelector(".category-input").value = "";
+function addCategoryTag(value) {
+  //validate
+  if (value.length === 0) {
+    return;
+  }
+
+  // container element
+  let categoryCont = document.getElementById("category-cont");
+  let tag = createCategoryTag(value);
+  categoryCont.appendChild(tag);
 }
 
 for (const element of document.getElementsByClassName("save-category-btn")) {
   element.addEventListener("click", (e) => {
-    addCategory(e);
+    let parent = e.target.parentElement;
+    //get value of select or input, trim and set to lowercase
+
+    let value = parent
+      .querySelector(".category-input")
+      .value.trim()
+      .toLowerCase();
+
+    addCategoryTag(value);
+
+    //reset value
+    parent.querySelector(".category-input").value = "";
   });
 }
 
@@ -183,7 +197,12 @@ function submit() {
   form.set("categories", postCategories);
   form.set("body", postContent);
 
-  fetch("/new-post", {
+  if (QUERY_PARAMS.get("edit") === "true") {
+    form.set("edit", "true");
+    form.set("id", QUERY_PARAMS.get("id"));
+  }
+
+  fetch("/admin/post", {
     credentials: "include",
     method: "POST",
     body: form,
@@ -200,6 +219,35 @@ function submit() {
 
 for (const element of document.getElementsByClassName("submit-btn")) {
   element.addEventListener("click", submit);
+}
+// ----------------------------------------------------------------------------
+//                 END
+// ----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+//                PRE-FILL WIDGETS IF EDITING POST
+//-----------------------------------------------------------------------------
+function preFillPage() {
+  let titleField = document.getElementById("title-field");
+  titleField.value = document.getElementById("prev-title").innerHTML.trim();
+  let prevCategories = document.getElementById("prev-cat").innerHTML.split(",");
+  let prevContent = document.getElementById("prev-content").innerHTML.trim();
+  if (prevContent.length !== 0) {
+    // change the content of the editor instance
+    editor.commands.setContent(prevContent);
+  }
+
+  for (let cat of prevCategories) {
+    cat = cat.trim().toLowerCase();
+    if (cat.length !== 0) {
+      addCategoryTag(cat);
+    }
+  }
+
+  console.log(prevContent, prevContent.length, prevCategories);
+}
+
+if (QUERY_PARAMS.get("edit") === "true") {
+  preFillPage();
 }
 // ----------------------------------------------------------------------------
 //                 END

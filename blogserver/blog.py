@@ -39,30 +39,3 @@ def post():
         with open(article_path) as f:
             article = json.load(f)
         return render_template('post.html', article=article)
-
-
-@bp.route("/dashboard", methods=("GET", "POST"))
-def dash():
-    return "A list of posts"
-
-
-@bp.route("/new-post", methods=("GET", "POST"))
-def new():
-    if request.method == "GET":
-        return render_template('new-post.html')
-    else:
-        title = request.form.get("title")
-        body = request.form.get("body")
-        categories = request.form.get("categories")
-        return json.dumps({"t": title, "b": body, "c": categories})
-
-
-@bp.route("/edit-post", methods=("GET", "POST"))
-def edit():
-    if request.method == "GET":
-        return render_template('edit-post.html')
-    else:
-        title = request.form.get("title")
-        body = request.form.get("body")
-        categories = request.form.get("categories")
-        return json.dumps({"t": title, "b": body, "c": categories})
