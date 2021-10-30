@@ -1681,6 +1681,26 @@ button {
   box-shadow: 0 0 0 2px hsl(var(--b1)),0 0 0 4px hsl(var(--nf));
 }
 
+.btn-primary {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--p)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--p)/var(--tw-border-opacity,1));
+  --tw-text-opacity: 1;
+  color: hsla(var(--pc)/var(--tw-text-opacity,1));
+}
+
+.btn-primary.btn-active,.btn-primary:hover {
+  --tw-bg-opacity: 1;
+  background-color: hsla(var(--pf)/var(--tw-bg-opacity,1));
+  --tw-border-opacity: 1;
+  border-color: hsla(var(--pf)/var(--tw-border-opacity,1));
+}
+
+.btn-primary:focus-visible {
+  box-shadow: 0 0 0 2px hsl(var(--b1)),0 0 0 4px hsl(var(--p));
+}
+
 .btn.glass.btn-active,.btn.glass:hover {
   --glass-opacity: 25%;
   --glass-border-opacity: 15%;
@@ -1925,6 +1945,10 @@ button {
   background-color: hsla(var(--bc)/var(--tw-bg-opacity,1));
   outline: 2px solid transparent;
   outline-offset: 2px;
+}
+
+.drawer-toggle:focus-visible~.drawer-content .drawer-button.btn-primary {
+  box-shadow: 0 0 0 2px hsl(var(--b1)),0 0 0 4px hsl(var(--p));
 }
 
 .drawer-toggle:focus-visible~.drawer-content .drawer-button.glass {
@@ -3223,6 +3247,10 @@ button {
   display: block;
 }
 
+.inline-block {
+  display: inline-block;
+}
+
 .inline {
   display: inline;
 }
@@ -3255,6 +3283,10 @@ button {
   height: 1rem;
 }
 
+.h-64 {
+  height: 16rem;
+}
+
 .w-3 {
   width: 0.75rem;
 }
@@ -3283,6 +3315,10 @@ button {
   width: 83.333333%;
 }
 
+.w-64 {
+  width: 16rem;
+}
+
 .transform {
   transform: var(--tw-transform);
 }
@@ -3309,6 +3345,10 @@ button {
 
 .justify-start {
   justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
 }
 
 .justify-center {
@@ -3368,6 +3408,16 @@ button {
 .bg-gray-100 {
   --tw-bg-opacity: 1;
   background-color: rgba(243, 244, 246, var(--tw-bg-opacity));
+}
+
+.bg-gray-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(209, 213, 219, var(--tw-bg-opacity));
+}
+
+.bg-gray-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(229, 231, 235, var(--tw-bg-opacity));
 }
 
 .stroke-current {
@@ -3439,6 +3489,11 @@ button {
 .px-6 {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .text-center {
