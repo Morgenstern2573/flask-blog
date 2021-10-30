@@ -108,13 +108,13 @@ import collapseController from "./controllers/collapse_controller";
 window.Stimulus = Application.start();
 Stimulus.register("collapse", collapseController);
 
-function createCategoryTag(value) {
+function createCategoryTag(value, text) {
   let tag = document.createElement("p");
   tag.classList = "post-category badge badge-outline mr-2";
 
   let delBtn = document.createElement("span");
   delBtn.classList = "cursor-pointer";
-  delBtn.title = `remove ${value}`;
+  delBtn.title = `remove ${text}`;
   //"X" svg
   delBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-3 h-3 stroke-current">   
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>                       
@@ -122,13 +122,16 @@ function createCategoryTag(value) {
   delBtn.addEventListener("click", (e) => {
     tag.remove();
   });
-
-  tag.innerHTML = `<span class="mr-2 category-name">${value}</span>`;
+  let val = document.createElement("span");
+  val.classList = "hidden cat-value";
+  val.innerText = value;
+  tag.innerHTML = `<span class="mr-2 category-name">${text}</span>`;
   tag.appendChild(delBtn);
+  tag.appendChild(val);
   return tag;
 }
 
-function addCategoryTag(value) {
+function addCategoryTag(value, text) {
   //validate
   if (value.length === 0) {
     return;
@@ -136,7 +139,7 @@ function addCategoryTag(value) {
 
   // container element
   let categoryCont = document.getElementById("category-cont");
-  let tag = createCategoryTag(value);
+  let tag = createCategoryTag(value, text);
   categoryCont.appendChild(tag);
 }
 
@@ -144,13 +147,11 @@ for (const element of document.getElementsByClassName("save-category-btn")) {
   element.addEventListener("click", (e) => {
     let parent = e.target.parentElement;
     //get value of select or input, trim and set to lowercase
+    let inputField = parent.querySelector(".category-input");
+    let value = inputField.value.trim().toLowerCase();
+    let text = inputField.options[inputField.selectedIndex].text;
 
-    let value = parent
-      .querySelector(".category-input")
-      .value.trim()
-      .toLowerCase();
-
-    addCategoryTag(value);
+    addCategoryTag(value, text);
 
     //reset value
     parent.querySelector(".category-input").value = "";
@@ -185,7 +186,7 @@ function submit() {
   }
 
   //get categories from DOM
-  for (const element of document.getElementsByClassName("category-name")) {
+  for (const element of document.getElementsByClassName("cat-value")) {
     postCategories += element.innerText.toLowerCase() + ",";
   }
   //remove trailing comma
@@ -206,15 +207,23 @@ function submit() {
     credentials: "include",
     method: "POST",
     body: form,
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Network response was not OK");
-    }
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not OK");
+      }
+      // window.location.pathname = "/";
+      return response.json();
+    })
+    .then((data) => {
+      if (data.status !== "ok") {
+        errorMsg.innerText = data.message;
+        errorMsg.classList.remove("hidden");
+      }
 
-    console.log(response.json());
-    // window.location.pathname = "/";
-    return;
-  });
+      console.log(data);
+    })
+    .catch((e) => console.log(e));
 }
 
 for (const element of document.getElementsByClassName("submit-btn")) {
@@ -229,7 +238,9 @@ for (const element of document.getElementsByClassName("submit-btn")) {
 function preFillPage() {
   let titleField = document.getElementById("title-field");
   titleField.value = document.getElementById("prev-title").innerHTML.trim();
-  let prevCategories = document.getElementById("prev-cat").innerHTML.split(",");
+  let prevCategories = JSON.parse(
+    document.getElementById("prev-cat").innerHTML
+  );
   let prevContent = document.getElementById("prev-content").innerHTML.trim();
   if (prevContent.length !== 0) {
     // change the content of the editor instance
@@ -237,9 +248,8 @@ function preFillPage() {
   }
 
   for (let cat of prevCategories) {
-    cat = cat.trim().toLowerCase();
     if (cat.length !== 0) {
-      addCategoryTag(cat);
+      addCategoryTag(cat[0], cat[1]);
     }
   }
 

@@ -18531,35 +18531,41 @@ img.ProseMirror-separator {
   });
   window.Stimulus = Application.start();
   Stimulus.register("collapse", collapse_controller_default);
-  function createCategoryTag(value) {
+  function createCategoryTag(value, text2) {
     let tag = document.createElement("p");
     tag.classList = "post-category badge badge-outline mr-2";
     let delBtn = document.createElement("span");
     delBtn.classList = "cursor-pointer";
-    delBtn.title = `remove ${value}`;
+    delBtn.title = `remove ${text2}`;
     delBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-3 h-3 stroke-current">   
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>                       
                       </svg>`;
     delBtn.addEventListener("click", (e) => {
       tag.remove();
     });
-    tag.innerHTML = `<span class="mr-2 category-name">${value}</span>`;
+    let val = document.createElement("span");
+    val.classList = "hidden cat-value";
+    val.innerText = value;
+    tag.innerHTML = `<span class="mr-2 category-name">${text2}</span>`;
     tag.appendChild(delBtn);
+    tag.appendChild(val);
     return tag;
   }
-  function addCategoryTag(value) {
+  function addCategoryTag(value, text2) {
     if (value.length === 0) {
       return;
     }
     let categoryCont = document.getElementById("category-cont");
-    let tag = createCategoryTag(value);
+    let tag = createCategoryTag(value, text2);
     categoryCont.appendChild(tag);
   }
   for (const element of document.getElementsByClassName("save-category-btn")) {
     element.addEventListener("click", (e) => {
       let parent = e.target.parentElement;
-      let value = parent.querySelector(".category-input").value.trim().toLowerCase();
-      addCategoryTag(value);
+      let inputField = parent.querySelector(".category-input");
+      let value = inputField.value.trim().toLowerCase();
+      let text2 = inputField.options[inputField.selectedIndex].text;
+      addCategoryTag(value, text2);
       parent.querySelector(".category-input").value = "";
     });
   }
@@ -18580,7 +18586,7 @@ img.ProseMirror-separator {
     } else {
       errorMsg.classList.add("hidden");
     }
-    for (const element of document.getElementsByClassName("category-name")) {
+    for (const element of document.getElementsByClassName("cat-value")) {
       postCategories += element.innerText.toLowerCase() + ",";
     }
     postCategories = postCategories.slice(0, -1);
@@ -18601,9 +18607,14 @@ img.ProseMirror-separator {
       if (!response.ok) {
         throw new Error("Network response was not OK");
       }
-      console.log(response.json());
-      return;
-    });
+      return response.json();
+    }).then((data) => {
+      if (data.status !== "ok") {
+        errorMsg.innerText = data.message;
+        errorMsg.classList.remove("hidden");
+      }
+      console.log(data);
+    }).catch((e) => console.log(e));
   }
   for (const element of document.getElementsByClassName("submit-btn")) {
     element.addEventListener("click", submit);
@@ -18611,15 +18622,14 @@ img.ProseMirror-separator {
   function preFillPage() {
     let titleField = document.getElementById("title-field");
     titleField.value = document.getElementById("prev-title").innerHTML.trim();
-    let prevCategories = document.getElementById("prev-cat").innerHTML.split(",");
+    let prevCategories = JSON.parse(document.getElementById("prev-cat").innerHTML);
     let prevContent = document.getElementById("prev-content").innerHTML.trim();
     if (prevContent.length !== 0) {
       editor.commands.setContent(prevContent);
     }
     for (let cat of prevCategories) {
-      cat = cat.trim().toLowerCase();
       if (cat.length !== 0) {
-        addCategoryTag(cat);
+        addCategoryTag(cat[0], cat[1]);
       }
     }
     console.log(prevContent, prevContent.length, prevCategories);
