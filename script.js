@@ -36,7 +36,6 @@ const editor = new Editor({
     Image,
     Underline,
   ],
-  content: `<p>The start of something beautiful...</p>`,
 
   onTransaction({ editor, transaction }) {
     function updateBtnState(prop, btn, options) {

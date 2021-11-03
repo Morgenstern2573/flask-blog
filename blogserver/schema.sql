@@ -6,22 +6,23 @@ DROP TABLE IF EXISTS categories;
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username varchar(100) UNIQUE,
-  userpassword TEXT
+  userpassword TEXT NOT NULL
 );
 
 CREATE TABLE posts (
   id SERIAL PRIMARY KEY,
-  title varchar(200) UNIQUE,
-  body TEXT
+  title varchar(200) UNIQUE NOT NULL,
+  body TEXT NOT NULL,
+  published BOOLEAN DEFAULT FALSE NOT NULL
 );
 
 CREATE TABLE categories (
   id SERIAL PRIMARY KEY,
-  title varchar(100) UNIQUE
+  title varchar(100) UNIQUE NOT NULL
 );
 
 CREATE TABLE post_category (
-  post_id int references posts(id),
-  category_id int references categories(id),
+  post_id int references posts(id) ON DELETE CASCADE,
+  category_id int references categories(id) ON DELETE CASCADE,
   PRIMARY KEY(post_id, category_id)
 );

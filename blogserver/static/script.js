@@ -18485,7 +18485,6 @@ img.ProseMirror-separator {
       Image,
       tiptap_extension_underline_esm_default
     ],
-    content: `<p>The start of something beautiful...</p>`,
     onTransaction({ editor: editor2, transaction }) {
       function updateBtnState(prop, btn, options) {
         if (editor2.isActive(prop, options)) {

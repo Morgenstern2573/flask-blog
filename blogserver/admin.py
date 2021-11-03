@@ -18,7 +18,26 @@ def index():
 
 @bp.route("/dashboard", methods=("GET", "POST"))
 def dash():
-    return "A list of posts"
+    cursor = db.get_db()
+    posts = []
+    search = request.args.get("search")
+    try:
+        if search:
+            key = "%"+search+"%"
+            cursor.execute(
+                "SELECT * FROM posts WHERE title LIKE %s ESCAPE ''", (key,))
+        else:
+            cursor.execute("SELECT * FROM posts")
+
+        c = cursor.fetchall()
+        for row in c:
+            posts.append(dict(row))
+    except Exception:
+        traceback.print_exc()
+        return {"status": "fail", "message": "Internal Server Error"}
+    finally:
+        db.close_db(cursor)
+    return render_template('dashboard.html', posts=posts, search=search)
 
 
 @bp.route("/post", methods=("GET", "POST"))

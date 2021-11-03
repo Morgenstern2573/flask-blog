@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- <script defer src="{{ url_for('static', filename='script.js') }}"></script> -->
+  <title>Dashboard</title>
+</head>
+
+<body class="container mx-auto">
+  <div class="flex justify-center md:justify-end my-4">
+    <div class="flex items-center">
+      <input id="search-input"
+        type="text" 
+        class="mr-2 rounded-lg"
+        placeholder="Search Posts By Title"
+      >
+
+      <button
+        id="search-button"
+        class="h-full btn btn-sm">
+        <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1
+           16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,
+           15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,
+           6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+  {% if search %}
+    <div class="bg-gray-100 py-4 text-center"> 
+      <span class="text-xl capitalize mr-2">search results for "{{ search}}"</span> 
+      <a class="underline" href="/admin">Cancel</a>
+    </div>
+  {% endif %}
+  <!-- posts table -->
+  <div class="overflow-x-auto">
+    <table class="table w-full mx-auto">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Title</th> 
+          <th>Status</th> 
+          <th>Actions</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if posts|length != 0 %} 
+          {% for post in posts %}
+            <tr class="border-b">
+              <th class="hidden">{{ post.id }}</th>
+              <th>{{ loop.index }}</th>
+
+              <td class="capitalize">{{ post.title }}</td> 
+
+              <td>{{ "Publish" if post.published == "t" else "Draft"}}</td> 
+              
+              <td>
+                <button type="button" class="btn btn-sm">
+                  {{ "Save as Draft" if post.published == "t" else "Publish Post"}}
+                </button> 
+              </td>
+              
+              <td 
+                title="Edit {{ post.title }}" 
+              >
+                <a class="" href="/admin/post?edit=true&id={{ post.id }}">
+                  <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" />
+                  </svg>
+                </a>
+              </td>
+              
+              <td>
+                <button 
+                  class="del-icon"
+                  title="delete post {{ post.title }}"
+                >
+                  <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr class="border-b">
+            <th></th>
+
+            <td class="capitalize">No posts found</td> 
+
+            <td></td> 
+            
+            <td></td>
+            
+            <td></td>
+            
+            <td></td>
+
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  
+  <div id="delete-modal" class="hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
+      <span id="del-post-id" class="hidden"></span>
+      <div class="bg-white rounded p-8 text-xl">
+        <p class="flex justify-center mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#ff5722" class="w-12 h-12 mx-2">    
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+            >
+            </path>                      
+          </svg>
+        </p>
+        <p class="mb-4 text-center">Are you sure you want to delete post <span id="delete-post-title"></span></p>
+        <p class="mb-4 text-center">This action is irreversible!</p>
+        <div class="flex justify-end">
+          <button id="delete-post-btn" class="btn btn-sm mr-2">Delete Post</button>
+          <button id="hide-delete-modal" class="btn btn-sm">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    let searchBtn = document.getElementById("search-button");
+    searchBtn.addEventListener("click", (e) => {
+      let searchInput = document.getElementById("search-input");
+      let value = searchInput.value.trim().toLowerCase();
+
+      if (value.length === 0) {
+        return
+      } else {
+        location.assign(`/admin/dashboard?search=${value}`)
+      }
+    })
+  </script>
+
+  <script>
+    let delModal = document.getElementById("delete-modal")
+    for (const node of document.getElementsByClassName("del-icon")) {
+      node.addEventListener("click", () => {
+        delModal.classList.remove("hidden")
+        let parent = node.parentElement
+        while (parent.tagName != "tr") {
+          parent = parent.parentElement
+        }
+
+        let postId = parent.querySelector(".hidden").innerHTML
+        document.getElementById("del-post-id").innerHTML = postId
+      })
+    }
+
+    let cancelDelBtn = document.getElementById("hide-delete-modal")
+    cancelDelBtn.addEventListener("click", () => {
+      delModal.classList.add("hidden")
+    })
+
+    let delPostBtn
+  </script>
+</body>
+
+</html>
