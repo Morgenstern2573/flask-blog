@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <title>Categories</title>
+</head>
+<body class="container mx-auto">
+  <p id="error-msg" class="error-banner"></p>
+  
+  <!-- Toolbar -->
+  <div class="w-full flex flex-wrap md:flex-nowrap justify-center md:justify-between my-4 px-4 items-center">
+    <div class="w-full flex justify-start items-center"> 
+      <button id="new-category-btn" class="btn btn-sm mr-4">
+            New Category
+      </button>
+      <div id="add-cat-cont" class="hidden">
+        <div class="flex items-center">
+          <input class="mr-4 w-full rounded" type="text" placeholder="Name...">
+          <button id="add-category-btn" class="btn btn-sm mr-2">Save</button>
+          <button id="hide-add-cont" class="btn btn-sm">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- categories table -->
+  <div class="overflow-x-auto">
+    <table class="table w-full mx-auto">
+      <!-- table headers -->
+      <thead>
+        <tr>
+          <th></th>
+          <th>Title</th> 
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <!-- table rows -->
+      <tbody>
+        {% if categories|length != 0 %} 
+          {% for category in categories %}
+            <tr class="border-b">
+              <th class="hidden category-id">{{ category.id }}</th>
+              <th>{{ loop.index }}</th>
+
+              <td class="capitalize category-title">{{ category.title }}</td> 
+
+              <td>
+                <div class="flex">               
+                  <a title="Edit {{ category.title }}" class="mr-10 edit-icon"  href="/admin/category?edit=true&id={{ category.id }}">
+                    <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" />
+                    </svg>
+                  </a>
+                  
+                  <button
+                    class="del-icon"
+                    title="delete category {{ category.title }}"
+                  >
+                    <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        <!-- if no categories exist -->
+        {% else %}
+          <tr class="border-b">
+            <th></th>
+
+            <td class="capitalize">No categories found</td> 
+
+            <td></td> 
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- edit existing category modal -->
+  <div id="edit-cat-modal" class="hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
+      <span id="edit-cat-id" class="hidden"></span>
+      <div class="bg-white rounded p-8 px-12 text-xl">
+        <h1 class="text-2xl mb-8">Edit Category</h1>
+        <input id="edit-cat-input" type="text">
+        
+        <div class="flex justify-end">
+          <button id="edit-category-btn" class="btn btn-sm mr-2">Save</button>
+          <button id="hide-edit-modal" class="btn btn-sm">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- delete category confirmation modal -->
+  <div id="delete-modal" class="hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
+      <span id="del-category-id" class="hidden"></span>
+      <div class="bg-white rounded p-8 text-xl">
+        <p class="flex justify-center mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#ff5722" class="w-12 h-12 mx-2">    
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+            >
+            </path>                      
+          </svg>
+        </p>
+        <p class="mb-4 text-center">Are you sure you want to delete category "<span id="delete-category-title"></span>" </p>
+        <p class="mb-8 text-center">This action is irreversible!</p>
+        <div class="flex justify-center">
+          <button id="delete-category-btn" class="btn btn-sm mr-2">Delete category</button>
+          <button id="hide-delete-modal" class="btn btn-sm">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- script for adding a new category -->
+  <script>
+    document.getElementById("new-category-btn").addEventListener("click", e => {
+      document.getElementById("add-cat-cont").classList.remove("hidden")
+    })
+
+    document.getElementById("hide-add-cont").addEventListener("click", e => {
+      document.getElementById("add-cat-cont").classList.add("hidden")
+    })
+  </script>
+
+  <!-- script for editing a category -->
+  <script>
+    let errorMsg = document.getElementById("error-msg")
+    let editModal = document.getElementById("edit-cat-modal")
+    for (const node of document.getElementsByClassName("edit-icon")) {
+      node.addEventListener("click", () => {
+        editModal.classList.remove("hidden")
+        let parent = node.parentElement
+        while (parent.tagName !== "TR") {
+          parent = parent.parentElement
+        }
+
+        let catId = parent.querySelector(".hidden.category-id").innerHTML
+        document.getElementById("edit-post-id").innerHTML = catId
+        document.getElementById("edit-cat-input").value = parent.querySelector(".category-title").innerText
+      })
+    }
+
+    let cancelEditBtn = document.getElementById("hide-edit-modal")
+    cancelEditBtn.addEventListener("click", () => {
+      editModal.classList.add("hidden")
+    })
+
+    // let delPostBtn = document.getElementById("delete-post-btn")
+    // delPostBtn.addEventListener("click", e => {
+    //   postID = document.getElementById("del-post-id").innerText
+      
+    //   fetch(`/admin/delete-post?id=${postID}`, {
+    //     credentials:"include", 
+    //   }).then((response) => {
+    //     if (!response.ok) {
+    //       throw new Error("Network response was not OK");
+    //     }
+    //     return response.json();
+    // }).then((data) => {
+    //   console.log(data);
+
+    //   if (data.status !== "ok") {
+    //     errorMsg.innerText = data.message;
+    //     errorMsg.classList.remove("hidden");
+    //     return;
+    //   }
+
+    //   location.assign("/admin/dashboard");
+    // }).catch((e) => console.log(e));
+    // })
+  </script>
+
+  <!-- script for deleting a category -->
+  <script>
+    let errorMsg = document.getElementById("error-msg")
+    let delModal = document.getElementById("delete-modal")
+    for (const node of document.getElementsByClassName("del-icon")) {
+      node.addEventListener("click", () => {
+        delModal.classList.remove("hidden")
+        let parent = node.parentElement
+        while (parent.tagName !== "TR") {
+          parent = parent.parentElement
+        }
+
+        let postId = parent.querySelector(".hidden.category-id").innerHTML
+        document.getElementById("del-category-id").innerHTML = postId
+        document.getElementById("delete-category-title").innerHTML = parent.querySelector(".category-title").innerText
+      })
+    }
+
+    let cancelDelBtn = document.getElementById("hide-delete-modal")
+    cancelDelBtn.addEventListener("click", () => {
+      delModal.classList.add("hidden")
+    })
+
+    let delPostBtn = document.getElementById("delete-category-btn")
+    delPostBtn.addEventListener("click", e => {
+      postID = document.getElementById("del-category-id").innerText
+      
+    // fetch(`/admin/delete-post?id=${postID}`, {
+    //     credentials:"include", 
+    //   }).then((response) => {
+    //     if (!response.ok) {
+    //       throw new Error("Network response was not OK");
+    //     }
+    //     return response.json();
+    // }).then((data) => {
+    //   console.log(data);
+
+    //   if (data.status !== "ok") {
+    //     errorMsg.innerText = data.message;
+    //     errorMsg.classList.remove("hidden");
+    //     return;
+    //   }
+
+    //   location.assign("/admin/dashboard");
+    // }).catch((e) => console.log(e));
+    })
+  </script>
+</body>
+</html>

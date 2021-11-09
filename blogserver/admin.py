@@ -1,5 +1,3 @@
-import os.path
-import glob
 import json
 import traceback
 
@@ -195,12 +193,22 @@ def del_post():
         db.close_db(cursor)
     return json.dumps({"status": "ok"})
 
-# @bp.route("/edit-post", methods=("GET", "POST"))
-# def edit():
-#     if request.method == "GET":
-#         return render_template('edit-post.html')
-#     else:
-#         title = request.form.get("title")
-#         body = request.form.get("body")
-#         categories = request.form.get("categories")
-#         return json.dumps({"t": title, "b": body, "c": categories})
+
+@bp.route("/category", methods=("GET",))
+def category():
+    if request.method == "GET":
+        cursor = db.get_db()
+        categories = []
+        try:
+            cursor.execute("SELECT * FROM categories")
+            c = cursor.fetchall()
+            for row in c:
+                categories.append(dict(row))
+        except Exception:
+            traceback.print_exc()
+            return {"status": "fail", "message": "Internal Server Error"}
+        finally:
+            db.close_db(cursor)
+        return render_template("category.html", categories=categories)
+    else:
+        return "W.I.P"
