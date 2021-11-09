@@ -43,12 +43,15 @@ def dash():
 @bp.route("/post", methods=("GET", "POST"))
 def new():
     if request.method == "GET":
+        # current data of post to be edited
         prev = {}
         categories = []
         cursor = db.get_db()
+
         # get list of all categories in database
         cursor.execute('SELECT * FROM CATEGORIES')
         c = cursor.fetchall()
+
         for row in c:
             categories.append((row["id"], row["title"]))
         if request.args.get("edit") == "true":
@@ -56,6 +59,7 @@ def new():
                 post_id = request.args.get("id")
                 if not post_id:
                     return {"status": "fail", "message": "no post specified"}
+
                 prev["id"] = post_id
                 cursor.execute("SELECT * FROM POSTS WHERE id = %s", (post_id,))
                 post = cursor.fetchone()
@@ -67,6 +71,7 @@ def new():
                 cursor.execute(
                     "SELECT * FROM post_category WHERE post_id = %s", (post_id,))
                 c = cursor.fetchall()
+
                 post_cats = []
                 for row in c:
                     cursor.execute(
@@ -74,9 +79,11 @@ def new():
                     d = cursor.fetchone()
                     post_cats.append([d["id"], d["title"]])
                 prev["cat"] = json.dumps(post_cats)
+
             except Exception:
                 traceback.print_exc()
                 return json.dumps({"status": "fail", "message": "Internal Server Error"})
+
             finally:
                 db.close_db(cursor)
 
@@ -89,6 +96,7 @@ def new():
         categories = request.form.get("categories")
         edit = request.form.get("edit")
         post_id = request.form.get("id")
+        publish = request.form.get("publish")
 
         # validation
         if not post_title:
@@ -98,6 +106,11 @@ def new():
         if len(error_msg) != 0:
             return {"status": "fail", "message": error_msg}
 
+        if not publish or publish == "false":
+            publish = False
+        else:
+            publish = True
+
         # lazy way to filter out duplicate categories
         if len(categories) > 0:
             categories = set(categories.split(","))
@@ -106,28 +119,21 @@ def new():
             categories = []
 
         if edit == "true":
+            # logic for editing an existing post
             try:
                 if not post_id:
                     return {"status": "fail", "message": "No post specified"}
 
                 cursor.execute("SELECT * FROM posts WHERE id = %s", (post_id,))
                 if not cursor.fetchone():
-                    return {"status": "fail", "message": "No specified post does not exist"}
+                    return {"status": "fail", "message": "Specified post does not exist"}
 
                 cursor.execute(
-                    "UPDATE posts SET title = %s, body = %s WHERE id = %s", (post_title, post_body, post_id))
+                    "UPDATE posts SET title = %s, body = %s, published = %s WHERE id = %s", (post_title, post_body, publish, post_id))
 
                 cursor.execute(
                     "DELETE FROM post_category WHERE post_id = %s", (post_id,))
-                # throwaway variable
-                # d = cursor.fetchall()
-                # existing_categories = []
-                # for row in d:
-                #     existing_categories.append(row["category_id"])
-                # print(categories)
-                # categories = [
-                #     x for x in categories if x not in existing_categories]
-                # print(categories, existing_categories)
+
                 for x in categories:
                     cursor.execute(
                         "INSERT INTO post_category (post_id, category_id) VALUES (%s, %s)", (post_id, x))
@@ -139,6 +145,7 @@ def new():
             finally:
                 db.close_db(cursor)
         else:
+            # logic for creating a new post
             try:
                 cursor.execute(
                     "SELECT * FROM posts WHERE title = %s", (post_title,))
@@ -148,10 +155,11 @@ def new():
 
                 # insert title and body into posts
                 cursor.execute(
-                    "INSERT INTO posts (title, body) VALUES (%s, %s)", (post_title, post_body))
+                    "INSERT INTO posts (title, body, published) VALUES (%s, %s, %s)", (post_title, post_body, publish))
                 cursor.execute(
                     "SELECT * FROM posts WHERE title = %s", (post_title,))
                 post_id = (cursor.fetchone())['id']
+
                 # insert article ids and categories into art_cat
                 for a in categories:
                     a = int(a)
@@ -166,6 +174,26 @@ def new():
 
         return json.dumps({"status": "ok"})
 
+
+@bp.route("/delete-post", methods=("GET",))
+def del_post():
+    post_id = request.args.get("id")
+    if not post_id:
+        return json.dumps({"status": "fail", "message": "no post specified"})
+
+    cursor = db.get_db()
+    try:
+        cursor.execute("SELECT * FROM posts WHERE id = %s", (post_id,))
+        if not cursor.fetchone():
+            return json.dumps({"status": "fail", "message": "Specified post not found"})
+        cursor.execute("DELETE FROM posts WHERE id = %s", (post_id,))
+        cursor.connection.commit()
+    except Exception:
+        traceback.print_exc()
+        return json.dumps({"status": "fail", "message": "Internal Server Error"})
+    finally:
+        db.close_db(cursor)
+    return json.dumps({"status": "ok"})
 
 # @bp.route("/edit-post", methods=("GET", "POST"))
 # def edit():

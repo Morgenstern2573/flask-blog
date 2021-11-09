@@ -3339,14 +3339,14 @@ button {
   margin-bottom: 1rem;
 }
 
-.my-16 {
-  margin-top: 4rem;
-  margin-bottom: 4rem;
-}
-
 .mx-2 {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
+}
+
+.my-16 {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
 }
 
 .mr-2 {
@@ -3445,10 +3445,6 @@ button {
   height: 100%;
 }
 
-.h-6 {
-  height: 1.5rem;
-}
-
 .h-12 {
   height: 3rem;
 }
@@ -3477,16 +3473,12 @@ button {
   width: 1rem;
 }
 
-.w-5\/6 {
-  width: 83.333333%;
-}
-
-.w-6 {
-  width: 1.5rem;
-}
-
 .w-12 {
   width: 3rem;
+}
+
+.w-5\/6 {
+  width: 83.333333%;
 }
 
 .transform {
@@ -3511,6 +3503,10 @@ button {
 
 .items-center {
   align-items: center;
+}
+
+.items-baseline {
+  align-items: baseline;
 }
 
 .justify-start {
@@ -4108,8 +4104,8 @@ button {
     align-items: flex-start;
   }
 
-  .md\:justify-end {
-    justify-content: flex-end;
+  .md\:justify-between {
+    justify-content: space-between;
   }
 
   .md\:p-4 {

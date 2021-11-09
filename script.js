@@ -164,7 +164,7 @@ for (const element of document.getElementsByClassName("save-category-btn")) {
 // ----------------------------------------------------------------------------
 //                 SUBMIT POST DATA
 // ----------------------------------------------------------------------------
-function submit() {
+function submit(publish) {
   let titleField = document.getElementById("title-field");
   let postTitle = titleField.value.trim().toLowerCase();
   let postContent = editor.getHTML();
@@ -202,6 +202,15 @@ function submit() {
     form.set("id", QUERY_PARAMS.get("id"));
   }
 
+  console.log(publish);
+  if (!publish || publish === false) {
+    publish = false;
+  } else {
+    publish = true;
+  }
+  console.log(publish);
+  form.set("publish", publish);
+
   fetch("/admin/post", {
     credentials: "include",
     method: "POST",
@@ -215,18 +224,30 @@ function submit() {
       return response.json();
     })
     .then((data) => {
+      console.log(data);
+
       if (data.status !== "ok") {
         errorMsg.innerText = data.message;
         errorMsg.classList.remove("hidden");
+        return;
       }
 
-      console.log(data);
+      location.assign("/admin/dashboard");
     })
     .catch((e) => console.log(e));
 }
 
 for (const element of document.getElementsByClassName("submit-btn")) {
-  element.addEventListener("click", submit);
+  element.addEventListener("click", (e) => {
+    console.log(e.target);
+    if (e.target.classList.contains("publish-btn")) {
+      console.log("publish-btn");
+      submit(true);
+    } else {
+      console.log("draft-btn");
+      submit(false);
+    }
+  });
 }
 // ----------------------------------------------------------------------------
 //                 END
