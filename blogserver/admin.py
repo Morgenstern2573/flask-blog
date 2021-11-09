@@ -14,7 +14,7 @@ def index():
     return redirect('/admin/dashboard')
 
 
-@bp.route("/dashboard", methods=("GET", "POST"))
+@bp.route("/dashboard", methods=("GET",))
 def dash():
     cursor = db.get_db()
     posts = []
@@ -194,7 +194,7 @@ def del_post():
     return json.dumps({"status": "ok"})
 
 
-@bp.route("/category", methods=("GET",))
+@bp.route("/category", methods=("GET", "POST"))
 def category():
     if request.method == "GET":
         cursor = db.get_db()
@@ -211,4 +211,28 @@ def category():
             db.close_db(cursor)
         return render_template("category.html", categories=categories)
     else:
+        error_msg = ""
+        cursor = db.get_db()
+        category_title = request.form.get("title")
+        r_type = request.form.get("type")
+        category_id = request.form.get("id")
+
+        # validation
+        if not category_title:
+            error_msg = "no category title provided"
+        if len(error_msg) != 0:
+            return {"status": "fail", "message": error_msg}
+
+        if r_type == "add":
+            try:
+                cursor.execute(
+                    "INSERT INTO categories (title) VALUES (%s)", (category_title,))
+                cursor.connection.commit()
+                return json.dumps({"status": "ok"})
+            except Exception:
+                return json.dumps({"status": "fail", "message": "Internal Server Error"})
+                traceback.print_exc()
+            finally:
+                db.close_db(cursor)
+
         return "W.I.P"

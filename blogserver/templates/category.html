@@ -20,7 +20,7 @@
       </button>
       <div id="add-cat-cont" class="hidden">
         <div class="flex items-center">
-          <input class="mr-4 w-full rounded" type="text" placeholder="Name...">
+          <input id="add-category-input" class="mr-4 w-full rounded" type="text" placeholder="Name...">
           <button id="add-category-btn" class="btn btn-sm mr-2">Save</button>
           <button id="hide-add-cont" class="btn btn-sm">Cancel</button>
         </div>
@@ -51,11 +51,11 @@
 
               <td>
                 <div class="flex">               
-                  <a title="Edit {{ category.title }}" class="mr-10 edit-icon"  href="/admin/category?edit=true&id={{ category.id }}">
+                  <span title="Edit {{ category.title }}" class="mr-10 edit-icon">
                     <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                       <path fill="currentColor" d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" />
                     </svg>
-                  </a>
+                  </span>
                   
                   <button
                     class="del-icon"
@@ -124,6 +124,8 @@
 
   <!-- script for adding a new category -->
   <script>
+    let errorMsg = document.getElementById("error-msg")
+
     document.getElementById("new-category-btn").addEventListener("click", e => {
       document.getElementById("add-cat-cont").classList.remove("hidden")
     })
@@ -131,11 +133,45 @@
     document.getElementById("hide-add-cont").addEventListener("click", e => {
       document.getElementById("add-cat-cont").classList.add("hidden")
     })
+
+    let addCatBtn = document.getElementById("add-category-btn")
+    
+    addCatBtn.addEventListener("click", e => {
+      let catTitle = document.getElementById("add-category-input").value.trim().toLowerCase()
+      
+      if (!catTitle || catTitle.length === 0) {
+        return
+      }
+
+      let form = new FormData()
+      form.set("title", catTitle)
+      form.set("type", "add")
+
+      fetch(`/admin/category`, {
+        method: "POST",
+        credentials:"include",
+        body: form
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not OK");
+        }
+        return response.json();
+    }).then((data) => {
+      console.log(data);
+
+      if (data.status !== "ok") {
+        errorMsg.innerText = data.message;
+        errorMsg.classList.remove("hidden");
+        return;
+      }
+
+      location.assign("/admin/category");
+    }).catch((e) => console.log(e));
+    })
   </script>
 
   <!-- script for editing a category -->
   <script>
-    let errorMsg = document.getElementById("error-msg")
     let editModal = document.getElementById("edit-cat-modal")
     for (const node of document.getElementsByClassName("edit-icon")) {
       node.addEventListener("click", () => {
@@ -146,7 +182,7 @@
         }
 
         let catId = parent.querySelector(".hidden.category-id").innerHTML
-        document.getElementById("edit-post-id").innerHTML = catId
+        document.getElementById("edit-cat-id").innerHTML = catId
         document.getElementById("edit-cat-input").value = parent.querySelector(".category-title").innerText
       })
     }
@@ -183,7 +219,6 @@
 
   <!-- script for deleting a category -->
   <script>
-    let errorMsg = document.getElementById("error-msg")
     let delModal = document.getElementById("delete-modal")
     for (const node of document.getElementsByClassName("del-icon")) {
       node.addEventListener("click", () => {
