@@ -238,6 +238,12 @@ def category():
         if r_type == "add":
             try:
                 cursor.execute(
+                    "SELECT * FROM categories WHERE id = %s", (category_id,))
+                if cursor.fetchone():
+                    db.close_db(cursor)
+                    return json.dumps({"status": "fail", "message": "specified category already exists"})
+
+                cursor.execute(
                     "INSERT INTO categories (title) VALUES (%s)", (category_title,))
                 cursor.connection.commit()
             except Exception:

@@ -114,7 +114,7 @@ function createCategoryTag(value, text) {
   let delBtn = document.createElement("span");
   delBtn.classList = "cursor-pointer";
   delBtn.title = `remove ${text}`;
-  //"X" svg
+  //"X" svg icon
   delBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-3 h-3 stroke-current">   
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>                       
                       </svg>`;
@@ -136,26 +136,30 @@ function addCategoryTag(value, text) {
     return;
   }
 
+  for (const node of document.getElementsByClassName("category-name")) {
+    if (node.innerHTML === text) {
+      return;
+    }
+  }
+
   // container element
   let categoryCont = document.getElementById("category-cont");
   let tag = createCategoryTag(value, text);
   categoryCont.appendChild(tag);
 }
 
-for (const element of document.getElementsByClassName("save-category-btn")) {
-  element.addEventListener("click", (e) => {
-    let parent = e.target.parentElement;
-    //get value of select or input, trim and set to lowercase
-    let inputField = parent.querySelector(".category-input");
-    let value = inputField.value.trim().toLowerCase();
-    let text = inputField.options[inputField.selectedIndex].text;
+// document.querySelector(".save-category-btn").addEventListener("click", (e) => {
+//   let parent = e.target.parentElement;
+//   //get value of select or input, trim and set to lowercase
+//   let inputField = parent.querySelector(".category-input");
+//   let value = inputField.value.trim().toLowerCase();
+//   let text = inputField.options[inputField.selectedIndex].text;
 
-    addCategoryTag(value, text);
+//   addCategoryTag(value, text);
 
-    //reset value
-    parent.querySelector(".category-input").value = "";
-  });
-}
+//   //reset value
+//   parent.querySelector(".category-input").value = "";
+// });
 
 // ----------------------------------------------------------------------------
 //                 END
@@ -190,7 +194,6 @@ function submit(publish) {
   }
   //remove trailing comma
   postCategories = postCategories.slice(0, -1);
-  console.log(postTitle, postContent, postCategories);
 
   const form = new FormData();
   form.set("title", postTitle);
@@ -202,13 +205,11 @@ function submit(publish) {
     form.set("id", QUERY_PARAMS.get("id"));
   }
 
-  console.log(publish);
   if (!publish || publish === false) {
     publish = false;
   } else {
     publish = true;
   }
-  console.log(publish);
   form.set("publish", publish);
 
   fetch("/admin/post", {
@@ -224,8 +225,6 @@ function submit(publish) {
       return response.json();
     })
     .then((data) => {
-      console.log(data);
-
       if (data.status !== "ok") {
         errorMsg.innerText = data.message;
         errorMsg.classList.remove("hidden");
@@ -239,12 +238,9 @@ function submit(publish) {
 
 for (const element of document.getElementsByClassName("submit-btn")) {
   element.addEventListener("click", (e) => {
-    console.log(e.target);
     if (e.target.classList.contains("publish-btn")) {
-      console.log("publish-btn");
       submit(true);
     } else {
-      console.log("draft-btn");
       submit(false);
     }
   });
@@ -272,8 +268,6 @@ function preFillPage() {
       addCategoryTag(cat[0], cat[1]);
     }
   }
-
-  console.log(prevContent, prevContent.length, prevCategories);
 }
 
 if (QUERY_PARAMS.get("edit") === "true") {

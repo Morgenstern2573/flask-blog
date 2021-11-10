@@ -29,46 +29,51 @@
       <h2 class="leading-none mb-6 text-xl">Categories</h2>
       
       <div id="category-cont"
-        class="mb-4 flex flex-wrap justify-start items-center" ></div>
+        class="mb-4 flex flex-wrap justify-start items-center" >
+      </div>
       
-        <div tabindex="0" class="dropdown">
-        <button  
-          type="button" 
-          class="text-xs btn btn-xs" 
-          data-action="click->collapse#hideAll"
+      <div class="flex items-center">
+        <button
+          type="button"
+          class="btn btn-xs mr-4"
+          data-action="click->collapse#toggleVisibility"
         >
           Add Category
         </button>
 
-        <div 
-          tabindex="0" 
-          class="dropdown-content p-2 shadow menu  bg-base-100 rounded-box w-52"
-        >
-          <ul>
-            <!-- <li class="cursor-pointer" data-action="click->collapse#showNew">NEW CATEGORY</li> -->
-            <li class="cursor-pointer" data-action="click->collapse#showEx">EXISTING CATEGORY</li>
-          </ul>
-        </div>
-      </div>
-        <div>
-          <!-- <div data-collapse-target="newContent" class="hidden mt-2">
-            <input type="text" class="category-input border border-black rounded px-2" placeholder="Name...">
-            <button type="button" class="btn btn-xs px-2 save-category-btn">Save</button>
-          </div> -->
-
-          <div data-collapse-target="exContent" class="hidden mt-2">
-            <select type="text" class="category-input border border-black rounded px-2">
+        <div data-collapse-target="content" class="hidden">
+          <div class="flex items-center">
+            <!-- dynamic list of categories -->
+            <select class="category-input border border-black rounded mr-2">
               {% for cat in categories %}
                 <option value="{{ cat[0] }}">{{ cat[1] }}</option>
               {% else %}
-                 <option value="None">No Existing Categories</option>
+                  <option value="None">No Existing Categories</option>
               {% endfor %}
             </select>
+
+            <!-- only show action buttons if at least one category exists -->
             {% if categories|length != 0 %}
-              <button type="button" class="btn btn-xs px-2 save-category-btn">Save</button>
+              <button 
+                type="button" 
+                class="btn btn-xs px-2 mr-2 save-category-btn"
+                data-collapse-target="trigger"
+                data-action="click->collapse#saveCategory"
+              >
+                  Save
+              </button>
+              
+              <button 
+                type="button"
+                class="btn btn-xs px-2 cancel-category-btn"
+                data-action="click->collapse#hide"
+              >
+                Cancel
+              </button>
             {% endif %}
           </div>
         </div>
+      </div>
     </div>
     
     <div class="editor-block border border-black rounded-md mb-4">

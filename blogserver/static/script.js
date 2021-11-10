@@ -18425,45 +18425,69 @@ img.ProseMirror-separator {
   Controller.values = {};
 
   // controllers/collapse_controller.js
+  function createCategoryTag(value, text2) {
+    let tag = document.createElement("p");
+    tag.classList = "post-category badge badge-outline mr-2";
+    let delBtn = document.createElement("span");
+    delBtn.classList = "cursor-pointer";
+    delBtn.title = `remove ${text2}`;
+    delBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-3 h-3 stroke-current">   
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>                       
+                      </svg>`;
+    delBtn.addEventListener("click", (e) => {
+      tag.remove();
+    });
+    let val = document.createElement("span");
+    val.classList = "hidden cat-value";
+    val.innerText = value;
+    tag.innerHTML = `<span class="mr-2 category-name">${text2}</span>`;
+    tag.appendChild(delBtn);
+    tag.appendChild(val);
+    return tag;
+  }
+  function addCategoryTag(value, text2) {
+    if (value.length === 0) {
+      return;
+    }
+    for (const node4 of document.getElementsByClassName("category-name")) {
+      if (node4.innerHTML === text2) {
+        return;
+      }
+    }
+    let categoryCont = document.getElementById("category-cont");
+    let tag = createCategoryTag(value, text2);
+    categoryCont.appendChild(tag);
+  }
   var collapse_controller_default = class extends Controller {
-    hideAll() {
-      if (this.hasNewContentTarget) {
-        this.newContentTarget.classList.add("hidden");
+    toggleVisibility() {
+      if (!this.hasContentTarget) {
+        return;
       }
-      if (this.hasExContentTarget) {
-        this.exContentTarget.classList.add("hidden");
+      if (this.contentTarget.classList.contains("hidden")) {
+        this.contentTarget.classList.remove("hidden");
+      } else {
+        this.contentTarget.classList.add("hidden");
       }
     }
-    showNew() {
-      let collapse;
-      if (this.hasNewContentTarget) {
-        collapse = this.newContentTarget;
+    hide() {
+      if (!this.hasContentTarget) {
+        return;
       }
-      if (collapse.classList.contains("hidden")) {
-        collapse.classList.remove("hidden");
-      } else {
-        collapse.classList.add("hidden");
-      }
-      if (this.hasExContentTarget) {
-        this.exContentTarget.classList.add("hidden");
-      }
+      this.contentTarget.classList.add("hidden");
     }
-    showEx() {
-      let collapse;
-      if (this.hasExContentTarget) {
-        collapse = this.exContentTarget;
+    saveCategory() {
+      if (!this.hasContentTarget || !this.hasTriggerTarget) {
+        return;
       }
-      if (collapse.classList.contains("hidden")) {
-        collapse.classList.remove("hidden");
-      } else {
-        collapse.classList.add("hidden");
-      }
-      if (this.hasNewContentTarget) {
-        this.newContentTarget.classList.add("hidden");
-      }
+      let parent = this.triggerTarget.parentElement;
+      let inputField = parent.querySelector(".category-input");
+      let value = inputField.value.trim().toLowerCase();
+      let text2 = inputField.options[inputField.selectedIndex].text;
+      addCategoryTag(value, text2);
+      this.contentTarget.classList.add("hidden");
     }
   };
-  __publicField(collapse_controller_default, "targets", ["newContent", "exContent"]);
+  __publicField(collapse_controller_default, "targets", ["content", "trigger"]);
 
   // script.js
   var QUERY_PARAMS = new URLSearchParams(window.location.search);
@@ -18530,7 +18554,7 @@ img.ProseMirror-separator {
   });
   window.Stimulus = Application.start();
   Stimulus.register("collapse", collapse_controller_default);
-  function createCategoryTag(value, text2) {
+  function createCategoryTag2(value, text2) {
     let tag = document.createElement("p");
     tag.classList = "post-category badge badge-outline mr-2";
     let delBtn = document.createElement("span");
@@ -18550,23 +18574,18 @@ img.ProseMirror-separator {
     tag.appendChild(val);
     return tag;
   }
-  function addCategoryTag(value, text2) {
+  function addCategoryTag2(value, text2) {
     if (value.length === 0) {
       return;
     }
+    for (const node4 of document.getElementsByClassName("category-name")) {
+      if (node4.innerHTML === text2) {
+        return;
+      }
+    }
     let categoryCont = document.getElementById("category-cont");
-    let tag = createCategoryTag(value, text2);
+    let tag = createCategoryTag2(value, text2);
     categoryCont.appendChild(tag);
-  }
-  for (const element of document.getElementsByClassName("save-category-btn")) {
-    element.addEventListener("click", (e) => {
-      let parent = e.target.parentElement;
-      let inputField = parent.querySelector(".category-input");
-      let value = inputField.value.trim().toLowerCase();
-      let text2 = inputField.options[inputField.selectedIndex].text;
-      addCategoryTag(value, text2);
-      parent.querySelector(".category-input").value = "";
-    });
   }
   function submit(publish) {
     let titleField = document.getElementById("title-field");
@@ -18589,7 +18608,6 @@ img.ProseMirror-separator {
       postCategories += element.innerText.toLowerCase() + ",";
     }
     postCategories = postCategories.slice(0, -1);
-    console.log(postTitle, postContent, postCategories);
     const form = new FormData();
     form.set("title", postTitle);
     form.set("categories", postCategories);
@@ -18598,13 +18616,11 @@ img.ProseMirror-separator {
       form.set("edit", "true");
       form.set("id", QUERY_PARAMS.get("id"));
     }
-    console.log(publish);
     if (!publish || publish === false) {
       publish = false;
     } else {
       publish = true;
     }
-    console.log(publish);
     form.set("publish", publish);
     fetch("/admin/post", {
       credentials: "include",
@@ -18616,7 +18632,6 @@ img.ProseMirror-separator {
       }
       return response.json();
     }).then((data) => {
-      console.log(data);
       if (data.status !== "ok") {
         errorMsg.innerText = data.message;
         errorMsg.classList.remove("hidden");
@@ -18627,12 +18642,9 @@ img.ProseMirror-separator {
   }
   for (const element of document.getElementsByClassName("submit-btn")) {
     element.addEventListener("click", (e) => {
-      console.log(e.target);
       if (e.target.classList.contains("publish-btn")) {
-        console.log("publish-btn");
         submit(true);
       } else {
-        console.log("draft-btn");
         submit(false);
       }
     });
@@ -18647,10 +18659,9 @@ img.ProseMirror-separator {
     }
     for (let cat of prevCategories) {
       if (cat.length !== 0) {
-        addCategoryTag(cat[0], cat[1]);
+        addCategoryTag2(cat[0], cat[1]);
       }
     }
-    console.log(prevContent, prevContent.length, prevCategories);
   }
   if (QUERY_PARAMS.get("edit") === "true") {
     preFillPage();
