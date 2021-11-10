@@ -104,6 +104,7 @@
     <div class="absolute inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
       <span id="del-category-id" class="hidden"></span>
       <div class="bg-white rounded p-8 text-xl">
+        <!-- warning icon -->
         <p class="flex justify-center mb-4">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#ff5722" class="w-12 h-12 mx-2">    
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -112,7 +113,8 @@
             </path>                      
           </svg>
         </p>
-        <p class="mb-4 text-center">Are you sure you want to delete category "<span id="delete-category-title"></span>" </p>
+
+        <p class="mb-4 text-center">Are you sure you want to delete category "<span id="delete-category-title"></span>" ?</p>
         <p class="mb-8 text-center">This action is irreversible!</p>
         <div class="flex justify-center">
           <button id="delete-category-btn" class="btn btn-sm mr-2">Delete category</button>
@@ -235,6 +237,7 @@
   <!-- script for deleting a category -->
   <script>
     let delModal = document.getElementById("delete-modal")
+    // listener to open modal when the icon is clicked
     for (const node of document.getElementsByClassName("del-icon")) {
       node.addEventListener("click", () => {
         delModal.classList.remove("hidden")
@@ -243,39 +246,55 @@
           parent = parent.parentElement
         }
 
-        let postId = parent.querySelector(".hidden.category-id").innerHTML
-        document.getElementById("del-category-id").innerHTML = postId
+        let catId = parent.querySelector(".hidden.category-id").innerHTML
+        document.getElementById("del-category-id").innerHTML = catId
         document.getElementById("delete-category-title").innerHTML = parent.querySelector(".category-title").innerText
       })
     }
 
+    // code to hide the modal when cancel is clicked
     let cancelDelBtn = document.getElementById("hide-delete-modal")
     cancelDelBtn.addEventListener("click", () => {
       delModal.classList.add("hidden")
     })
 
-    let delPostBtn = document.getElementById("delete-category-btn")
-    delPostBtn.addEventListener("click", e => {
-      postID = document.getElementById("del-category-id").innerText
+    // handle the click of the delete category button
+    let delCatBtn = document.getElementById("delete-category-btn")
+      delCatBtn.addEventListener("click", e => {
+      // get id of the category to be deleted
+      let catID = document.getElementById("del-category-id").innerText
       
-    // fetch(`/admin/delete-post?id=${postID}`, {
-    //     credentials:"include", 
-    //   }).then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error("Network response was not OK");
-    //     }
-    //     return response.json();
-    // }).then((data) => {
-    //   console.log(data);
+      let delCatBtn = document.getElementById("delete-category-btn")
+      
+      // code that sends the request to the backend
+      if (!catID || catID.length === 0) {
+        return
+      }
 
-    //   if (data.status !== "ok") {
-    //     errorMsg.innerText = data.message;
-    //     errorMsg.classList.remove("hidden");
-    //     return;
-    //   }
+      let form = new FormData()
+      form.set("type", "del")
+      form.set("id", catID)
+      
+      fetch(`/admin/category`, {
+        method: "POST",
+        body: form,
+        credentials:"include", 
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not OK");
+        }
+        return response.json();
+    }).then((data) => {
+      console.log(data);
 
-    //   location.assign("/admin/dashboard");
-    // }).catch((e) => console.log(e));
+      if (data.status !== "ok") {
+        errorMsg.innerText = data.message;
+        errorMsg.classList.remove("hidden");
+        return;
+      }
+
+      location.assign("/admin/category");
+    }).catch((e) => console.log(e));
     })
   </script>
 </body>

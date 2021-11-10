@@ -229,7 +229,7 @@ def category():
         category_id = request.form.get("id")
 
         # validation
-        if not category_title:
+        if not category_title and r_type != "del":
             error_msg = "no category title provided"
         if len(error_msg) != 0:
             db.close_db(cursor)
@@ -272,4 +272,25 @@ def category():
                 traceback.print_exc()
                 db.close_db(cursor)
                 return json.dumps({"status": "fail", "message": "Internal Server Error"})
-        return "W.I.P"
+
+        else:
+            try:
+                if not category_id:
+                    db.close_db(cursor)
+                    return json.dumps({"status": "fail", "message": "category id missing"})
+
+                cursor.execute(
+                    "SELECT * FROM categories WHERE id = %s", (category_id,))
+                if not cursor.fetchone():
+                    db.close_db(cursor)
+                    return json.dumps({"status": "fail", "message": "specified category does not exist"})
+
+                cursor.execute(
+                    "DELETE FROM categories WHERE id = %s", (category_id,))
+                cursor.connection.commit()
+                db.close_db(cursor)
+                return json.dumps({"status": "ok"})
+            except Exception:
+                traceback.print_exc()
+                db.close_db(cursor)
+                return json.dumps({"status": "fail", "message": "Internal Server Error"})
