@@ -9,7 +9,7 @@
     rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <script defer src="{{ url_for('static', filename='script.js') }}"></script>
-  <title>Admin</title>
+  <title>Post</title>
 </head>
 
 <body class="container mx-auto">
@@ -25,7 +25,8 @@
     </div>
 
     <div data-controller="collapse" 
-      class="category-block mb-4 p-4 border border-black rounded">
+      class="category-block mb-4 p-4 border border-black rounded"
+    >
       <h2 class="leading-none mb-6 text-xl">Categories</h2>
       
       <div id="category-cont"
@@ -96,7 +97,7 @@
     </div>
   </div>
 
-  <!-- data dump for editing -->
+  <!-- data dump for editing existing post -->
   <div id="prev-title" class="hidden">{{ prev["title"]  }}</div>
   <div id="prev-content" class="hidden">{{ prev.content|safe }}</div>
   <div id="prev-cat" class="hidden">{{ prev["cat"] }}</div>
