@@ -3,3 +3,4 @@ __pycache__
 setup.txt
 node_modules
 .vscode
+*.map
