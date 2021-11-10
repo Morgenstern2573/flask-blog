@@ -51,7 +51,7 @@
 
               <td>
                 <div class="flex">               
-                  <span title="Edit {{ category.title }}" class="mr-10 edit-icon">
+                  <span title="Edit {{ category.title }}" class="mr-10 cursor-pointer edit-icon">
                     <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                       <path fill="currentColor" d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" />
                     </svg>
@@ -87,11 +87,11 @@
   <div id="edit-cat-modal" class="hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
       <span id="edit-cat-id" class="hidden"></span>
-      <div class="bg-white rounded p-8 px-12 text-xl">
-        <h1 class="text-2xl mb-8">Edit Category</h1>
-        <input id="edit-cat-input" type="text">
+      <div class="w-full mx-4 md:w-1/2 lg:w-1/3 bg-white rounded p-8 text-xl">
+        <h1 class="text-3xl uppercase mb-6 text-center">Edit Category</h1>
+        <input id="edit-cat-input" class="w-full p-4 mb-6 rounded" type="text">
         
-        <div class="flex justify-end">
+        <div class="flex justify-center">
           <button id="edit-category-btn" class="btn btn-sm mr-2">Save</button>
           <button id="hide-edit-modal" class="btn btn-sm">Cancel</button>
         </div>
@@ -173,6 +173,7 @@
   <!-- script for editing a category -->
   <script>
     let editModal = document.getElementById("edit-cat-modal")
+    // listener to open modal when the icon is clicked
     for (const node of document.getElementsByClassName("edit-icon")) {
       node.addEventListener("click", () => {
         editModal.classList.remove("hidden")
@@ -187,34 +188,48 @@
       })
     }
 
+    // code to hide the modal when cancel is clicked
     let cancelEditBtn = document.getElementById("hide-edit-modal")
     cancelEditBtn.addEventListener("click", () => {
       editModal.classList.add("hidden")
     })
 
-    // let delPostBtn = document.getElementById("delete-post-btn")
-    // delPostBtn.addEventListener("click", e => {
-    //   postID = document.getElementById("del-post-id").innerText
+    // code that sends the request to the backend
+    let editCatBtn = document.getElementById("edit-category-btn")
+    editCatBtn.addEventListener("click", e => {
+      let catId = document.getElementById("edit-cat-id").innerText
+      let catTitle = document.getElementById("edit-cat-input").value.trim().toLowerCase()
       
-    //   fetch(`/admin/delete-post?id=${postID}`, {
-    //     credentials:"include", 
-    //   }).then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error("Network response was not OK");
-    //     }
-    //     return response.json();
-    // }).then((data) => {
-    //   console.log(data);
+      if (!catTitle || catTitle.length === 0 || !catId || catId.length === 0) {
+        return
+      }
 
-    //   if (data.status !== "ok") {
-    //     errorMsg.innerText = data.message;
-    //     errorMsg.classList.remove("hidden");
-    //     return;
-    //   }
+      let form = new FormData()
+      form.set("title", catTitle)
+      form.set("type", "edit")
+      form.set("id", catId)
+      
+      fetch(`/admin/category`, {
+        method: "POST",
+        body: form,
+        credentials:"include", 
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not OK");
+        }
+        return response.json();
+    }).then((data) => {
+      console.log(data);
 
-    //   location.assign("/admin/dashboard");
-    // }).catch((e) => console.log(e));
-    // })
+      if (data.status !== "ok") {
+        errorMsg.innerText = data.message;
+        errorMsg.classList.remove("hidden");
+        return;
+      }
+
+      location.assign("/admin/category");
+    }).catch((e) => console.log(e));
+    })
   </script>
 
   <!-- script for deleting a category -->

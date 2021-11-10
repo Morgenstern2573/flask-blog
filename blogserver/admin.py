@@ -19,6 +19,7 @@ def dash():
     cursor = db.get_db()
     posts = []
     search = request.args.get("search")
+    error_msg = ""
     try:
         if search:
             key = "%"+search+"%"
@@ -32,9 +33,13 @@ def dash():
             posts.append(dict(row))
     except Exception:
         traceback.print_exc()
-        return {"status": "fail", "message": "Internal Server Error"}
+        error_msg = "Internal Server Error"
     finally:
         db.close_db(cursor)
+
+    if len(error_msg) != 0:
+        return json.dumps({"status": "fail", "message": error_msg})
+
     return render_template('dashboard.html', posts=posts, search=search)
 
 
@@ -56,12 +61,14 @@ def new():
             try:
                 post_id = request.args.get("id")
                 if not post_id:
+                    db.close_db(cursor)
                     return {"status": "fail", "message": "no post specified"}
 
                 prev["id"] = post_id
                 cursor.execute("SELECT * FROM POSTS WHERE id = %s", (post_id,))
                 post = cursor.fetchone()
                 if not post:
+                    db.close_db(cursor)
                     return {"status": "fail", "message": "post not found"}
 
                 prev["title"] = post["title"]
@@ -77,13 +84,11 @@ def new():
                     d = cursor.fetchone()
                     post_cats.append([d["id"], d["title"]])
                 prev["cat"] = json.dumps(post_cats)
-
+                db.close_db(cursor)
             except Exception:
                 traceback.print_exc()
-                return json.dumps({"status": "fail", "message": "Internal Server Error"})
-
-            finally:
                 db.close_db(cursor)
+                return json.dumps({"status": "fail", "message": "Internal Server Error"})
 
         return render_template('admin-post.html', prev=prev, categories=categories)
     else:
@@ -120,10 +125,12 @@ def new():
             # logic for editing an existing post
             try:
                 if not post_id:
+                    db.close_db(cursor)
                     return {"status": "fail", "message": "No post specified"}
 
                 cursor.execute("SELECT * FROM posts WHERE id = %s", (post_id,))
                 if not cursor.fetchone():
+                    db.close_db(cursor)
                     return {"status": "fail", "message": "Specified post does not exist"}
 
                 cursor.execute(
@@ -136,12 +143,11 @@ def new():
                     cursor.execute(
                         "INSERT INTO post_category (post_id, category_id) VALUES (%s, %s)", (post_id, x))
                 cursor.connection.commit()
-
+                db.close_db(cursor)
             except Exception:
                 traceback.print_exc()
-                return json.dumps({"status": "fail", "message": "Internal Server Error"})
-            finally:
                 db.close_db(cursor)
+                return json.dumps({"status": "fail", "message": "Internal Server Error"})
         else:
             # logic for creating a new post
             try:
@@ -149,6 +155,7 @@ def new():
                     "SELECT * FROM posts WHERE title = %s", (post_title,))
                 if cursor.fetchone():
                     error_msg = "Post with that tile already exists!"
+                    db.close_db(cursor)
                     return {"status": "fail", "message": error_msg}
 
                 # insert title and body into posts
@@ -164,11 +171,11 @@ def new():
                     cursor.execute(
                         "INSERT INTO post_category VALUES(%s, %s)", (post_id, a))
                 cursor.connection.commit()
+                db.close_db(cursor)
             except Exception:
                 traceback.print_exc()
-                return json.dumps({"status": "fail", "message": "Internal Server Error"})
-            finally:
                 db.close_db(cursor)
+                return json.dumps({"status": "fail", "message": "Internal Server Error"})
 
         return json.dumps({"status": "ok"})
 
@@ -183,20 +190,22 @@ def del_post():
     try:
         cursor.execute("SELECT * FROM posts WHERE id = %s", (post_id,))
         if not cursor.fetchone():
+            db.close_db(cursor)
             return json.dumps({"status": "fail", "message": "Specified post not found"})
         cursor.execute("DELETE FROM posts WHERE id = %s", (post_id,))
         cursor.connection.commit()
+        db.close_db(cursor)
     except Exception:
         traceback.print_exc()
-        return json.dumps({"status": "fail", "message": "Internal Server Error"})
-    finally:
         db.close_db(cursor)
+        return json.dumps({"status": "fail", "message": "Internal Server Error"})
     return json.dumps({"status": "ok"})
 
 
 @bp.route("/category", methods=("GET", "POST"))
 def category():
     if request.method == "GET":
+        error_msg = ""
         cursor = db.get_db()
         categories = []
         try:
@@ -206,9 +215,11 @@ def category():
                 categories.append(dict(row))
         except Exception:
             traceback.print_exc()
-            return {"status": "fail", "message": "Internal Server Error"}
+            error_msg = "Internal Server Error"
         finally:
             db.close_db(cursor)
+        if len(error_msg) != 0:
+            return json.dumps({"status": "fail", "message": error_msg})
         return render_template("category.html", categories=categories)
     else:
         error_msg = ""
@@ -221,6 +232,7 @@ def category():
         if not category_title:
             error_msg = "no category title provided"
         if len(error_msg) != 0:
+            db.close_db(cursor)
             return {"status": "fail", "message": error_msg}
 
         if r_type == "add":
@@ -228,11 +240,36 @@ def category():
                 cursor.execute(
                     "INSERT INTO categories (title) VALUES (%s)", (category_title,))
                 cursor.connection.commit()
-                return json.dumps({"status": "ok"})
             except Exception:
-                return json.dumps({"status": "fail", "message": "Internal Server Error"})
+                error_msg = "Internal Server Error"
                 traceback.print_exc()
             finally:
                 db.close_db(cursor)
 
+            if len(error_msg) == 0:
+                return json.dumps({"status": "ok"})
+            else:
+                return json.dumps({"status": "fail", "message": error_msg})
+
+        elif r_type == "edit":
+            try:
+                if not category_id:
+                    db.close_db(cursor)
+                    return json.dumps({"status": "fail", "message": "category id missing"})
+
+                cursor.execute(
+                    "SELECT * FROM categories WHERE id = %s", (category_id,))
+                if not cursor.fetchone():
+                    db.close_db(cursor)
+                    return json.dumps({"status": "fail", "message": "specified category does not exist"})
+
+                cursor.execute(
+                    "UPDATE categories SET title = %s WHERE id = %s", (category_title, category_id))
+                cursor.connection.commit()
+                db.close_db(cursor)
+                return json.dumps({"status": "ok"})
+            except Exception:
+                traceback.print_exc()
+                db.close_db(cursor)
+                return json.dumps({"status": "fail", "message": "Internal Server Error"})
         return "W.I.P"
