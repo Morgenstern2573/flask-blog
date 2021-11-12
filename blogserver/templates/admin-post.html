@@ -13,6 +13,7 @@
 </head>
 
 <body class="container mx-auto">
+  <!-- page content -->
   <div class="lg:w-2/3 mx-auto py-8 px-4 md:px-8">
     <p id="error-msg" class="error-banner"></p>
     <div class="title-block mb-4">
@@ -88,7 +89,7 @@
         <button class="menu-button btn-outline" id="image-button">Image</button>
       </div>
 
-      <div id="mount-element" class="prose"></div>
+      <div id="mount-element" class="prose py-4"></div>
     </div>
     
     <div>
@@ -96,7 +97,8 @@
       <button type="button" class="submit-btn btn btn-outline draft-btn">Save as Draft</button>
     </div>
   </div>
-
+  <!-- file input for image upload -->
+  <input type="file" id="img-upload-input" class="img-upload hidden" accept=".JPG,.JPEG,.PNG">
   <!-- data dump for editing existing post -->
   <div id="prev-title" class="hidden">{{ prev["title"]  }}</div>
   <div id="prev-content" class="hidden">{{ prev.content|safe }}</div>

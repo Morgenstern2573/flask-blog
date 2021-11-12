@@ -1071,12 +1071,26 @@ button {
   width: 2rem;
 }
 
+#mount-element.prose {
+  max-width: 100% !important;
+}
+
 .ProseMirror {
   min-height: 200px;
   padding-left: 1rem;
   padding-right: 1rem;
   outline: 2px solid transparent;
   outline-offset: 2px;
+}
+
+.ProseMirror > *:first-child {
+  margin-top: 0;
+}
+
+.ProseMirror img.ProseMirror-selectednode {
+  outline: 3px solid #68cef8;
+  margin: auto;
+  max-height: 70vh;
 }
 
 .error-banner {
@@ -1311,77 +1325,6 @@ button {
   opacity: 1;
   padding-bottom: 1rem;
   transition: padding .2s ease-in-out,background-color .2s ease-in-out;
-}
-
-.dropdown {
-  display: inline-block;
-  position: relative;
-}
-
-.dropdown>:focus {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-}
-
-.dropdown .dropdown-content {
-  opacity: 0;
-  position: absolute;
-  visibility: hidden;
-  z-index: 50;
-  --tw-translate-x: 0;
-  --tw-translate-y: 0;
-  --tw-rotate: 0;
-  --tw-skew-x: 0;
-  --tw-skew-y: 0;
-  --tw-scale-x: 1;
-  --tw-scale-x: .95;
-  --tw-scale-y: 1;
-  --tw-scale-y: .95;
-  transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  transform-origin: top;
-  transition-property: background-color,border-color,color,fill,stroke,opacity,box-shadow,transform;
-  transition-duration: .15s;
-  transition-duration: .2s;
-  transition-timing-function: cubic-bezier(.4,0,.2,1);
-}
-
-.dropdown-end .dropdown-content {
-  right: 0;
-}
-
-.dropdown-left .dropdown-content {
-  top: 0;
-  bottom: auto;
-  right: 100%;
-  transform-origin: right;
-}
-
-.dropdown-right .dropdown-content {
-  top: 0;
-  bottom: auto;
-  left: 100%;
-  transform-origin: left;
-}
-
-.dropdown-top .dropdown-content {
-  top: auto;
-  bottom: 100%;
-  transform-origin: bottom;
-}
-
-.dropdown-end.dropdown-right .dropdown-content {
-  bottom: 0;
-  top: auto;
-}
-
-.dropdown-end.dropdown-left .dropdown-content {
-  bottom: 0;
-  top: auto;
-}
-
-.dropdown.dropdown-hover:hover .dropdown-content,.dropdown.dropdown-open .dropdown-content,.dropdown:not(.dropdown-hover):focus-within .dropdown-content,.dropdown:not(.dropdown-hover):focus .dropdown-content {
-  opacity: 1;
-  visibility: visible;
 }
 
 .footer {
@@ -2153,11 +2096,6 @@ button {
   box-shadow: 0 0 0 2px currentColor;
 }
 
-.dropdown.dropdown-hover:hover .dropdown-content,.dropdown.dropdown-open .dropdown-content,.dropdown:focus-within .dropdown-content,.dropdown:focus .dropdown-content {
-  --tw-scale-x: 1;
-  --tw-scale-y: 1;
-}
-
 .input-disabled,.input[disabled] {
   --tw-bg-opacity: 1;
   background-color: hsla(var(--b2)/var(--tw-bg-opacity,1));
@@ -2890,10 +2828,6 @@ button {
   border-bottom-color: hsl(var(--bc)/40%);
 }
 
-.rounded-box {
-  border-radius: var(--rounded-box,1rem);
-}
-
 .glass,.glass.btn-active,.glass:hover {
   border: none;
   -webkit-backdrop-filter: blur(var(--glass-blur,40px));
@@ -3423,16 +3357,12 @@ button {
   margin-bottom: 1.5rem;
 }
 
-.mt-2 {
-  margin-top: 0.5rem;
+.mr-4 {
+  margin-right: 1rem;
 }
 
 .mb-1 {
   margin-bottom: 0.25rem;
-}
-
-.mr-4 {
-  margin-right: 1rem;
 }
 
 .ml-3 {
@@ -3521,10 +3451,6 @@ button {
 
 .w-full {
   width: 100%;
-}
-
-.w-52 {
-  width: 13rem;
 }
 
 .w-10 {
@@ -3618,11 +3544,6 @@ button {
   border-color: rgba(0, 0, 0, var(--tw-border-opacity));
 }
 
-.bg-base-100 {
-  --tw-bg-opacity: 1;
-  background-color: hsla(var(--b1) / var(--tw-bg-opacity));
-}
-
 .bg-indigo-500 {
   --tw-bg-opacity: 1;
   background-color: rgba(99, 102, 241, var(--tw-bg-opacity));
@@ -3665,12 +3586,12 @@ button {
   padding: 1rem;
 }
 
-.p-2 {
-  padding: 0.5rem;
-}
-
 .p-5 {
   padding: 1.25rem;
+}
+
+.p-2 {
+  padding: 0.5rem;
 }
 
 .p-8 {
@@ -3692,6 +3613,11 @@ button {
   padding-right: 0.5rem;
 }
 
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
@@ -3700,11 +3626,6 @@ button {
 .px-3 {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
-}
-
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
 }
 
 .px-5 {
@@ -3739,11 +3660,6 @@ button {
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
-}
-
-.text-xs {
-  font-size: 0.75rem;
-  line-height: 1rem;
 }
 
 .text-base {

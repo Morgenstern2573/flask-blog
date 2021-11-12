@@ -23,6 +23,7 @@ const underBtn = document.getElementById("underline-button");
 const lHeaderBtn = document.getElementById("h1-button");
 const sHeaderBtn = document.getElementById("h2-button");
 const linkBtn = document.getElementById("link-button");
+const imgBtn = document.getElementById("image-button");
 
 const editor = new Editor({
   element: document.querySelector("#mount-element"),
@@ -95,6 +96,27 @@ linkBtn.addEventListener("click", (e) => {
   editor.chain().toggleLink({ href: url }).focus().run();
 });
 
+imgBtn.addEventListener("click", (e) => {
+  document.getElementById("img-upload-input").click();
+});
+
+document.getElementById("img-upload-input").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  const reader = new FileReader();
+
+  reader.addEventListener(
+    "load",
+    function () {
+      // convert image file to base64 string
+      editor.chain().focus().setImage({ src: reader.result }).run();
+    },
+    false
+  );
+
+  if (file) {
+    reader.readAsDataURL(file);
+  }
+});
 //-----------------------------------------------------------------------------
 //                 END
 // ----------------------------------------------------------------------------

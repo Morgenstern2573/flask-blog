@@ -18497,6 +18497,7 @@ img.ProseMirror-separator {
   var lHeaderBtn = document.getElementById("h1-button");
   var sHeaderBtn = document.getElementById("h2-button");
   var linkBtn = document.getElementById("link-button");
+  var imgBtn = document.getElementById("image-button");
   var editor = new Editor({
     element: document.querySelector("#mount-element"),
     extensions: [
@@ -18551,6 +18552,19 @@ img.ProseMirror-separator {
       return;
     }
     editor.chain().toggleLink({ href: url }).focus().run();
+  });
+  imgBtn.addEventListener("click", (e) => {
+    document.getElementById("img-upload-input").click();
+  });
+  document.getElementById("img-upload-input").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.addEventListener("load", function() {
+      editor.chain().focus().setImage({ src: reader.result }).run();
+    }, false);
+    if (file) {
+      reader.readAsDataURL(file);
+    }
   });
   window.Stimulus = Application.start();
   Stimulus.register("collapse", collapse_controller_default);

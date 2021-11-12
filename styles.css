@@ -20,9 +20,23 @@
     @apply p-1 shadow-sm text-sm mr-2 my-2 btn btn-sm;
   }
 
+  #mount-element.prose {
+    max-width: 100% !important;
+  }
+
   .ProseMirror {
     min-height: 200px;
     @apply px-4 outline-none;
+  }
+
+  .ProseMirror > *:first-child {
+    margin-top: 0;
+  }
+
+  .ProseMirror img.ProseMirror-selectednode {
+    outline: 3px solid #68cef8;
+    margin: auto;
+    max-height: 70vh;
   }
 
   .error-banner {
