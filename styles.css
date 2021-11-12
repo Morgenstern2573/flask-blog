@@ -40,7 +40,7 @@
   }
 
   .error-banner {
-    @apply rounded capitalize text-xl font-medium mb-4 p-2 md:p-4 bg-red-300 text-red-800 text-center hidden;
+    @apply rounded capitalize text-xl font-medium mb-4 p-2 md:p-4 bg-red-300 text-red-800 text-center;
   }
   /* .ProseMirror h1 {
     @apply text-3xl;
