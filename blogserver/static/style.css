@@ -831,6 +831,10 @@ select {
   outline: 1px auto -webkit-focus-ring-color;
 }
 
+body {
+  font-family: Inter, sans-serif;
+}
+
 a:hover {
   --tw-text-opacity: 1;
   color: rgba(96, 165, 250, var(--tw-text-opacity));
@@ -1352,6 +1356,17 @@ button {
   .footer-center {
     grid-auto-flow: row dense;
   }
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  padding: .5rem .25rem;
 }
 
 .hero {
@@ -2093,6 +2108,11 @@ button {
 
 .drawer-toggle:focus-visible~.drawer-content .drawer-button.glass {
   box-shadow: 0 0 0 2px currentColor;
+}
+
+.label a:hover {
+  --tw-text-opacity: 1;
+  color: hsla(var(--bc)/var(--tw-text-opacity,1));
 }
 
 .input-disabled,.input[disabled] {
@@ -3400,6 +3420,10 @@ button {
   margin-left: 1rem;
 }
 
+.mr-1 {
+  margin-right: 0.25rem;
+}
+
 .block {
   display: block;
 }
@@ -3428,6 +3452,10 @@ button {
   height: 0.75rem;
 }
 
+.h-8 {
+  height: 2rem;
+}
+
 .h-10 {
   height: 2.5rem;
 }
@@ -3448,6 +3476,14 @@ button {
   width: 0.75rem;
 }
 
+.w-1\/6 {
+  width: 16.666667%;
+}
+
+.w-8 {
+  width: 2rem;
+}
+
 .w-full {
   width: 100%;
 }
@@ -3466,6 +3502,10 @@ button {
 
 .w-5\/6 {
   width: 83.333333%;
+}
+
+.w-1\/2 {
+  width: 50%;
 }
 
 .transform {
@@ -3494,6 +3534,10 @@ button {
 
 .justify-start {
   justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
 }
 
 .justify-center {
@@ -3597,14 +3641,14 @@ button {
   padding: 2rem;
 }
 
-.py-8 {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .px-2 {
@@ -3676,6 +3720,11 @@ button {
   line-height: 2rem;
 }
 
+.text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
 .font-medium {
   font-weight: 500;
 }
@@ -3700,6 +3749,11 @@ button {
   line-height: 1.625;
 }
 
+.text-indigo-500 {
+  --tw-text-opacity: 1;
+  color: rgba(99, 102, 241, var(--tw-text-opacity));
+}
+
 .text-gray-600 {
   --tw-text-opacity: 1;
   color: rgba(75, 85, 99, var(--tw-text-opacity));
@@ -3720,9 +3774,9 @@ button {
   color: rgba(55, 65, 81, var(--tw-text-opacity));
 }
 
-.text-indigo-500 {
+.text-blue-400 {
   --tw-text-opacity: 1;
-  color: rgba(99, 102, 241, var(--tw-text-opacity));
+  color: rgba(96, 165, 250, var(--tw-text-opacity));
 }
 
 .underline {
