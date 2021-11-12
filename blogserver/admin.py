@@ -44,7 +44,7 @@ def dash():
 
 
 @bp.route("/post", methods=("GET", "POST"))
-def new():
+def post():
     if request.method == "GET":
         # current data of post to be edited
         prev = {}
