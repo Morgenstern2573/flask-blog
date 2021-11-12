@@ -7,10 +7,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <title>{% block title %}Yo{% endblock %}</title>
+  {% block script %}{% endblock %}
+  <title>{% block title %}{% endblock %}</title>
 </head>
 <body class="conatiner mx-auto">
-  <header class="p-4 flex items-center">
+  <header class="px-4 pt-6 flex items-center">
     <div class="w-1/2 md:w-1/6 flex justify-start items-center text-xl font-medium">
       <span class="mr-1 text-blue-400">
         <svg class="w-8 h-8" viewBox="0 0 24 24">
@@ -30,7 +31,7 @@
     </div>
 
   </header>
-  <h1 class="px-4 mb-4 text-3xl font-medium">{% block label %}Super Great Page Header{% endblock %}</h1>
+  <h1 class="px-4 mb-6 text-4xl text-center font-medium">{% block label %}Super Great Page Header{% endblock %}</h1>
   {% block body%}
   {% endblock %}
 </body>

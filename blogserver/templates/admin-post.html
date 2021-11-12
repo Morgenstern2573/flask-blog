@@ -1,20 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'admin-layout.html'  %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <script defer src="{{ url_for('static', filename='script.js') }}"></script>
-  <title>Post</title>
-</head>
+{% block script %}
+<script defer src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}
 
-<body class="container mx-auto">
+{% block title %}Post{% endblock %}
+
+{% block label %}
+  {% if prev.title is none %}
+    New Post
+  {% else %}
+    Edit Post
+  {% endif %}
+{% endblock %}
+
+{% block body %}
+
   <!-- page content -->
-  <div class="lg:w-2/3 mx-auto py-8 px-4 md:px-8">
+  <div class="lg:w-2/3 mx-auto pb-8 px-4 md:px-8">
     <p id="error-msg" class="error-banner hidden"></p>
     <div class="title-block mb-4">
       <input type="text" class="text-3xl capitalize p-4 border border-black rounded block w-full"
@@ -103,4 +106,4 @@
   <div id="prev-title" class="hidden">{{ prev["title"]  }}</div>
   <div id="prev-content" class="hidden">{{ prev.content|safe }}</div>
   <div id="prev-cat" class="hidden">{{ prev["cat"] }}</div>
-</body>
+{% endblock %}
