@@ -249,7 +249,7 @@ def category():
             db.close_db(cursor)
         if len(error_msg) != 0:
             return json.dumps({"status": "fail", "message": error_msg})
-        return render_template("category.html", categories=categories)
+        return render_template("admin-category.html", categories=categories)
     else:
         error_msg = ""
         cursor = db.get_db()
