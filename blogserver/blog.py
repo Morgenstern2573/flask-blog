@@ -1,7 +1,9 @@
+from . import db
 import os
 import os.path
 import glob
 import json
+import traceback
 
 from flask import Blueprint, render_template, request
 from flask import url_for, make_response
@@ -11,17 +13,33 @@ bp = Blueprint("auth", __name__)
 
 @bp.route("/", methods=("GET",))
 def index():
-    # parent_dir, t = os.path.split(os.getcwd())
-    # print(parent_dir, os.getcwd())
-    # articles_pattern = os.path.join(os.getcwd(), 'articles/*.json')
-    # articles = glob.glob(articles_pattern)
-    # articles.sort(key=os.path.getmtime, reverse=True)
-    # articles = articles[:11]
-    # print(articles)
-    src = os.path.join(os.getcwd(), 'articles/index.json')
+    # src = os.path.join(os.getcwd(), 'articles/index.json')
+    # with open(src) as src_data:
+    #     article_data = json.load(src_data)
+    cursor = db.get_db()
+    cursor.execute(
+        "SELECT id, title, created_on FROM posts ORDER BY created_on ASC LIMIT 10")
     article_data = []
-    with open(src) as src_data:
-        article_data = json.load(src_data)
+    c = cursor.fetchall()
+    try:
+        for row in c:
+            d = {}
+            d["id"] = row["id"]
+            d["title"] = row["title"]
+            d["date"] = str(row["created_on"].year) + "|" + \
+                str(row["created_on"].month) + "|" + str(row["created_on"].day)
+            d["author"] = "Paul Akinyemi"
+            cursor.execute(
+                "SELECT category_id, title FROM post_category JOIN categories ON category_id = id WHERE post_id = %s", (row["id"],))
+            e = cursor.fetchall()
+            d["categories"] = []
+            for row in e:
+                d["categories"].append(dict(row))
+            article_data.append(d)
+        db.close_db(cursor)
+    except Exception:
+        traceback.print_exc()
+        return("Internal Server Error")
     return render_template('index.html', articles=article_data)
 
 
