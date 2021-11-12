@@ -24,9 +24,9 @@ def dash():
         if search:
             key = "%"+search+"%"
             cursor.execute(
-                "SELECT * FROM posts WHERE title LIKE %s ESCAPE ''", (key,))
+                "SELECT * FROM posts WHERE title LIKE %s ESCAPE '' ORDER BY created_on ASC", (key,))
         else:
-            cursor.execute("SELECT * FROM posts")
+            cursor.execute("SELECT * FROM posts ORDER BY created_on ASC")
 
         c = cursor.fetchall()
         for row in c:
@@ -238,7 +238,7 @@ def category():
         cursor = db.get_db()
         categories = []
         try:
-            cursor.execute("SELECT * FROM categories")
+            cursor.execute("SELECT * FROM categories ORDER BY created_on ASC")
             c = cursor.fetchall()
             for row in c:
                 categories.append(dict(row))
