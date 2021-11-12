@@ -12,7 +12,7 @@
 </head>
 
 <body class="container mx-auto">
-  <p id="error-msg" class="error-banner"></p>
+  <p id="error-msg" class="error-banner hidden"></p>
   
   <!-- Toolbar -->
   <div class="flex flex-wrap md:flex-nowrap justify-center md:justify-between my-4 px-4 items-center">
@@ -82,6 +82,7 @@
       </thead>
       <!-- table rows -->
       <tbody>
+        <!-- render rows if posts exist -->
         {% if posts|length != 0 %} 
           {% for post in posts %}
             <tr class="border-b">
@@ -94,13 +95,24 @@
               
               <td>
                 <div class="flex">
-                  <button type="button" class="btn btn-sm mr-10">
+                  <button 
+                    type="button" 
+                    class="btn btn-sm mr-10 update-status-btn 
+                    {{ 'draft-btn' if post.published == True else 'publish-btn'}}" 
+                  >
                     {{ "Save as Draft" if post.published == True else "Publish Post"}}
                   </button>
                   
-                  <a title="Edit {{ post.title }}" class="mr-10"  href="/admin/post?edit=true&id={{ post.id }}">
+                  <a 
+                    title="Edit {{ post.title }}" 
+                    class="mr-10"  
+                    href="/admin/post?edit=true&id={{ post.id }}"
+                  >
                     <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                      <path fill="currentColor" d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" />
+                      <path fill="currentColor" d="M20.71,7.04C21.1,6.65 21.1,6
+                       20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,
+                       5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,
+                       17.25Z" />
                     </svg>
                   </a>
                   
@@ -109,13 +121,16 @@
                     title="delete post {{ post.title }}"
                   >
                     <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                      <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
+                      <path fill="currentColor" d="M19,4H15.5L14.5,
+                      3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 
+                      0,0 18,19V7H6V19Z" />
                     </svg>
                   </button>
                 </div>
               </td>
             </tr>
           {% endfor %}
+        <!-- if no posts exist -->
         {% else %}
           <tr class="border-b">
             <th></th>
@@ -167,7 +182,7 @@
     })
   </script>
 
-  <!-- script that send the dlete post request -->
+  <!-- script that sends the delete post request -->
   <script>
     let errorMsg = document.getElementById("error-msg")
     let delModal = document.getElementById("delete-modal")
@@ -213,6 +228,50 @@
       location.assign("/admin/dashboard");
     }).catch((e) => console.log(e));
     })
+  </script>
+
+  <!-- script that send the update status request -->
+  <script>
+    // apply listener to all relevant buttons
+    for (const node of document.getElementsByClassName("update-status-btn")) {
+      let errorBanner = document.getElementById("error-msg")
+
+      node.addEventListener("click", e => {
+
+        // iterate until gets container row
+        let parent = node.parentElement
+        while (parent.tagName !== "TR") {
+          parent = parent.parentElement
+        }
+
+        const postID = parent.querySelector(".hidden.post-id").innerHTML;
+        const newStatus = node.classList.contains("draft-btn") ? "d": "p"
+
+        // send relevant network request
+        fetch(`/admin/update-post-status?id=${postID}&status=${newStatus}`, 
+        {
+          credentials:"include"
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw Error("Network Response not ok!")
+          }
+
+          return response.json()
+        })
+        .then(data => {
+          console.log(data)
+          if (data.status !== "ok") {
+            errorBanner.innerHTML = data.message
+            errorBanner.classList.remove("hidden")
+          } else {
+            location.assign("/admin/dashboard")
+          }
+        })
+        .catch(e => console.log(e))
+
+      })
+    }
   </script>
 </body>
 

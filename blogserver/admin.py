@@ -202,6 +202,35 @@ def del_post():
     return json.dumps({"status": "ok"})
 
 
+@bp.route("/update-post-status", methods=("GET",))
+def up_post_status():
+    post_id = request.args.get("id")
+    new_status = request.args.get("status")
+
+    if not post_id:
+        return json.dumps({"status": "fail", "message": "no post specified"})
+    elif not new_status:
+        return json.dumps({"status": "fail", "message": "no status specified"})
+
+    new_status = True if new_status == "p" else False
+    cursor = db.get_db()
+    try:
+        cursor.execute("SELECT * FROM posts WHERE id = %s", (post_id,))
+        if not cursor.fetchone():
+            db.close_db(cursor)
+            return json.dumps({"status": "fail", "message": "Specified post not found"})
+
+        cursor.execute(
+            "UPDATE posts SET published = %s WHERE id = %s", (new_status, post_id))
+        cursor.connection.commit()
+        db.close_db(cursor)
+    except Exception:
+        db.close_db(cursor)
+        traceback.print_exc()
+        return json.dumps({"status": "fail", "message": "Internal Server Error"})
+    return json.dumps({"status": "ok"})
+
+
 @bp.route("/category", methods=("GET", "POST"))
 def category():
     if request.method == "GET":
