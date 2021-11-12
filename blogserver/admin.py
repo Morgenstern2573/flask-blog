@@ -267,7 +267,7 @@ def category():
         if r_type == "add":
             try:
                 cursor.execute(
-                    "SELECT * FROM categories WHERE id = %s", (category_id,))
+                    "SELECT * FROM categories WHERE title = %s", (category_title,))
                 if cursor.fetchone():
                     db.close_db(cursor)
                     return json.dumps({"status": "fail", "message": "specified category already exists"})
