@@ -7,27 +7,28 @@
 {% block title %}Post{% endblock %}
 
 {% block label %}
-  {% if prev.title is none %}
+  {% if prev|length == 0 %}
     New Post
   {% else %}
     Edit Post
   {% endif %}
 {% endblock %}
 
+
 {% block body %}
 
-  <!-- page content -->
-  <div class="lg:w-2/3 mx-auto pb-8 px-4 md:px-8">
-    <p id="error-msg" class="error-banner hidden"></p>
-    <div class="title-block mb-4">
-      <input type="text" class="text-3xl capitalize p-4 border border-black rounded block w-full"
-      id="title-field"
-      placeholder="Post Title..."
-      autofocus
-      required
-      >
-    </div>
-
+<!-- page content -->
+<div class="lg:w-2/3 mx-auto pb-8 px-4 md:px-8">
+  <p id="error-msg" class="error-banner hidden"></p>
+  <div class="title-block mb-4">
+    <input type="text" class="text-3xl capitalize p-4 border border-black rounded block w-full"
+    id="title-field"
+    placeholder="Post Title..."
+    autofocus
+    required
+    >
+  </div>
+  
     <div data-controller="collapse" 
       class="category-block mb-4 p-4 border border-black rounded"
     >
