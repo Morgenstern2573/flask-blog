@@ -1,7 +1,4 @@
 from . import db
-import os
-import os.path
-import glob
 import json
 import traceback
 
@@ -47,12 +44,6 @@ def post():
         if not ind:
             return make_response('URL param missing', 401)
         ind = int(ind)
-        # articles_pattern = os.path.join(os.getcwd(), 'articles/*.json')
-        # articles = glob.glob(articles_pattern)[1:]
-        # article_path = articles[ind]
-        # article = ''
-        # with open(article_path) as f:
-        #     article = json.load(f)
         article = {}
         cursor = db.get_db()
         try:
