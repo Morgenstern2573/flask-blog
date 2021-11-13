@@ -1,0 +1,1 @@
+web: waitress-serve  --port=$PORT --call "blogserver:create_app"
