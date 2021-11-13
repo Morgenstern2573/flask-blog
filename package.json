@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tailwindcss -i styles.css -o blogserver/static/style.css -w",
-    "bundle": "esbuild script.js --bundle --sourcemap --watch --outfile=./blogserver/static/script.js "
+    "bundle": "esbuild script.js --bundle --sourcemap --watch --outfile=./blogserver/static/script.js ",
+    "bundle-prod": "esbuild script.js --bundle --outfile=./blogserver/static/script.js "
   },
   "author": "Paul Akinyemi",
   "license": "ISC",

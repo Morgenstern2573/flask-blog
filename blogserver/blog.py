@@ -12,7 +12,7 @@ bp = Blueprint("auth", __name__)
 def index():
     cursor = db.get_db()
     cursor.execute(
-        "SELECT id, title, created_on FROM posts ORDER BY created_on ASC LIMIT 10")
+        "SELECT id, title, created_on FROM posts WHERE published = TRUE ORDER BY created_on ASC LIMIT 10")
     article_data = []
     c = cursor.fetchall()
     try:

@@ -1,16 +1,26 @@
-{% extends 'base.html'  %}
+{% extends 'base.html' %} 
+{% block title %}{{article.title}}{%endblock %} 
 
 {% block body %}
-{% if article  %}
-  <div class=" lg:w-2/3 mx-auto">
-    <h1 class="capitalize title-font sm:text-3xl lg:text-5xl mb-4 font-medium text-gray-900 text-center">{{ article.title }}</h1>
-    <div class="text-gray-700 leading-relaxed mb-4 text-center">
-      <h4 class="my-2">Author: {{ article.author }}</h4> 
-      <h4 class="my-2">Written on: {{ article.date}} </h4>
-    </div>
-    <div class="prose">
-      {{ article.body|safe  }}
-    </div>
+ {% if article %}
+<div class="lg:w-2/3 mx-auto">
+  <h1
+    class="
+      capitalize
+      title-font
+      sm:text-3xl
+      lg:text-5xl
+      mb-4
+      font-medium
+      text-gray-900 text-center
+    "
+  >
+    {{ article.title }}
+  </h1>
+  <div class="text-gray-700 leading-relaxed mb-4 text-center">
+    <h4 class="my-2">Author: {{ article.author }}</h4>
+    <h4 class="my-2">Written on: {{ article.date}}</h4>
   </div>
-{% endif %}
-{% endblock %}
+  <div class="prose mx-auto">{{ article.body|safe }}</div>
+</div>
+{% endif %} {% endblock %}

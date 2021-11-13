@@ -4,3 +4,4 @@ setup.txt
 node_modules
 .vscode
 *.map
+.prettierrc.json
