@@ -13,9 +13,6 @@ bp = Blueprint("auth", __name__)
 
 @bp.route("/", methods=("GET",))
 def index():
-    # src = os.path.join(os.getcwd(), 'articles/index.json')
-    # with open(src) as src_data:
-    #     article_data = json.load(src_data)
     cursor = db.get_db()
     cursor.execute(
         "SELECT id, title, created_on FROM posts ORDER BY created_on ASC LIMIT 10")
@@ -50,10 +47,35 @@ def post():
         if not ind:
             return make_response('URL param missing', 401)
         ind = int(ind)
-        articles_pattern = os.path.join(os.getcwd(), 'articles/*.json')
-        articles = glob.glob(articles_pattern)[1:]
-        article_path = articles[ind]
-        article = ''
-        with open(article_path) as f:
-            article = json.load(f)
+        # articles_pattern = os.path.join(os.getcwd(), 'articles/*.json')
+        # articles = glob.glob(articles_pattern)[1:]
+        # article_path = articles[ind]
+        # article = ''
+        # with open(article_path) as f:
+        #     article = json.load(f)
+        article = {}
+        cursor = db.get_db()
+        try:
+            cursor.execute(
+                "SELECT title, created_on, body FROM posts WHERE id = %s", (ind,))
+            c = cursor.fetchone()
+            if not c:
+                db.close_db(cursor)
+                return "Requested post does not exist"
+            article["title"] = c["title"]
+            article["date"] = str(c["created_on"].year) + "|" + \
+                str(c["created_on"].month) + "|" + str(c["created_on"].day)
+            article["author"] = "Paul Akinyemi"
+            article["body"] = c["body"]
+
+            # cursor.execute(
+            #     "SELECT category_id, title FROM post_category JOIN categories ON category_id = id WHERE id = %s", (ind))
+            # e = cursor.fetchall()
+            # article["categories"] = []
+            # for row in e:
+            #     article["categories"].append(dict(row))
+            db.close_db(cursor)
+        except Exception:
+            traceback.print_exc()
+            return "Internal Server Error"
         return render_template('post.html', article=article)
